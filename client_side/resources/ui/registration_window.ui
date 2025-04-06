@@ -22,6 +22,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="6" column="1">
     <widget class="QLineEdit" name="password_conf_lineEdit">
+     <property name="text">
+      <string>1111111111111111</string>
+     </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
      </property>
@@ -90,7 +93,7 @@
    <item row="4" column="1">
     <widget class="QLineEdit" name="password_lineEdit">
      <property name="text">
-      <string>1</string>
+      <string>1111111111111111</string>
      </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>

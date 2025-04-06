@@ -6,6 +6,11 @@ from PyQt5 import QtWidgets
 import sys
 import os
 
+# TODO: План для разработки всего проекта:
+#  Добавить стиль к проекту, пример закомментирован выше;
+#  Генератор случайных паролей для пользователя;
+#  Хранение паролей пользователя;
+#
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

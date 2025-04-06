@@ -1,8 +1,17 @@
 from common.crypt import encrypt_string
+from common.consts import ROOT
+from dotenv import load_dotenv
 from common import TOTP
 import pymysql
 import bcrypt
+import os
 
+# Загружаем переменные из .env
+load_dotenv(f"{ROOT}/critical.env")
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PRIVATE_KEY = os.getenv("DB_PRIVATE_KEY")
 
 def get_db_connection(database):
     """
@@ -14,17 +23,17 @@ def get_db_connection(database):
     """
 
     try:
-        if database:
+        if database != "":
             return pymysql.connect(
-                host="localhost",
-                user="root",
-                password="1qaz!QAZ",
+                host=DB_HOST,
+                user=DB_USER,
+                password=DB_PASSWORD,
                 database=database)
         else:
             return pymysql.connect(
-            host="localhost",
-            user="root",
-            password="1qaz!QAZ")
+                host=DB_HOST,
+                user=DB_USER,
+                password=DB_PASSWORD)
     except RuntimeError:
         raise BaseException("Unable to connect to the database server")
 
@@ -34,7 +43,7 @@ def initialize_database():
     """
 
     try:
-        conn = get_db_connection(False)
+        conn = get_db_connection("")
     except BaseException as e:
         exit(e)
     cursor = conn.cursor()
@@ -56,6 +65,23 @@ def initialize_database():
             fa_secret VARCHAR(64) NOT NULL
         )
         """)
+
+        # Создаем таблицу Passwords, если она не существует
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS passwords (
+            id INTEGER PRIMARY KEY AUTO_INCREMENT ,
+            user_fk VARCHAR(64) NOT NULL,
+            service VARCHAR(64),
+            username VARCHAR(64) NOT NULL,
+            password_enc VARCHAR(64) NOT NULL,
+            notes TEXT,
+            url TEXT,
+            created_at DATETIME,
+            updated_at DATETIME,
+            FOREIGN KEY (user_fk) REFERENCES users(username) ON DELETE CASCADE
+        )
+        """)
+
         print("Таблица 'users' создана или уже существует.")
 
     except Exception as e:
@@ -64,6 +90,39 @@ def initialize_database():
     finally:
         cursor.close()
         conn.close()
+
+def add_password(username, password, title, url, notes):
+    """
+    Добавление нового пароля пользователя.
+    """
+
+    conn = get_db_connection("password_manager")
+    cursor = conn.cursor()
+    status = ""
+
+    try:
+
+        # SQL-запрос для добавления записи
+        query = "INSERT INTO passwords (username, password, title, url, notes) VALUES (%s, %s, %s, %s, %s)"
+        values = (username, password, title, url, notes)
+
+        # Выполняем запрос
+        cursor.execute(query, values)
+
+        # Фиксируем изменения
+        conn.commit()
+        status = f"0:ok"
+
+    except pymysql.connect.Error as err:
+        error = str(err).split(", ")
+        status = error[0][1:] + ":" + error[1][1:-2]
+
+        conn.rollback()  # Откатываем изменения в случае ошибки
+
+    finally:
+        cursor.close()
+        conn.close()
+        return status
 
 def add_user(username, password):
     """
@@ -83,7 +142,8 @@ def add_user(username, password):
     try:
         password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         secret_key = TOTP.generate_secret_key()
-        secret_key_crypt = encrypt_string(password, secret_key)
+        secret_key_crypt = encrypt_string(DB_PRIVATE_KEY, secret_key)
+
         # SQL-запрос для добавления записи
         query = "INSERT INTO users (username, password_hash, fa_secret) VALUES (%s, %s, %s)"
         values = (username, password_hash, secret_key_crypt)

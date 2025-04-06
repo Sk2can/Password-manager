@@ -107,7 +107,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>1qaz!QAZ</string>
+         <string>1111111111111111</string>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>

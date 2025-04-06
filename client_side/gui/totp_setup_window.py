@@ -1,4 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QGraphicsScene
+from dotenv import load_dotenv
+
+from common.consts import ROOT
 from common.interaction import send_to_server
 from common.crypt import decrypt_string
 from PyQt5.QtCore import QRectF
@@ -9,6 +12,9 @@ import qrcode
 import pyotp
 import os
 
+# Загружаем переменные из .env
+load_dotenv(f"{ROOT}/critical.env")
+DB_PRIVATE_KEY = os.getenv("DB_PRIVATE_KEY")
 
 Form, Base = uic.loadUiType(f"{consts.UI}totp_setup_window.ui")
 
@@ -19,7 +25,7 @@ class TOTPSetupWindow(QDialog, Form):
         self.setupUi(self)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint) # Удаление кнопки вопроса
         encrypted_totp_code = send_to_server(f"TOTP:{user}").split(":")[1]
-        totp_code = decrypt_string(password, encrypted_totp_code)
+        totp_code = decrypt_string(DB_PRIVATE_KEY, encrypted_totp_code)
         # Создание URI для Google Authenticator
         self.totp_uri = pyotp.TOTP(totp_code).provisioning_uri(
             name=user,

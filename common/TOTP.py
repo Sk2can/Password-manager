@@ -29,7 +29,7 @@ def totp_verify(secret_key, user_input):
     :rtype: bool
     """
     #  Получение текущего одноразового пароля
-    totp = pyotp.TOTP(secret_key.encode("utf-8"))
+    totp = pyotp.TOTP(secret_key)
     if totp.verify(user_input):
         return True
     else:

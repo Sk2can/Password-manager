@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>393</width>
-    <height>282</height>
+    <width>391</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Password manager</string>
+  </property>
+  <property name="documentMode">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -27,6 +30,25 @@
      <string>Hello</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>391</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="tearOffEnabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Добавить пароль</string>
+    </property>
+   </widget>
+   <addaction name="menu"/>
   </widget>
  </widget>
  <resources/>

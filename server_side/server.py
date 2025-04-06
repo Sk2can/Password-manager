@@ -1,15 +1,18 @@
 from common import database, TOTP, crypt
+from common.crypt import decrypt_string
 import threading
 import socket
+import os
 
 
 def handle_client(client_socket):
     try:
+        DB_PRIVATE_KEY = os.getenv("DB_PRIVATE_KEY")
         server_private_key, client_public_key = crypt.generate_key_pair()
         client_socket.sendall(client_public_key) # Отправка публичного ключа клиенту
 
         received = client_socket.recv(4096) # Прием зашифрованного сообщения от клиента
-        decrypted_message = crypt.decrypt_large_data(server_private_key, received.decode("utf-8")).split(":")
+        decrypted_message = crypt.decrypt_large_data(bytes(server_private_key), received.decode("utf-8")).split(":")
 
         result=":"
         server_public_key = decrypted_message[0] # Публичный ключ для шифрования, полученный от клиента
@@ -39,7 +42,8 @@ def handle_client(client_socket):
                 user = decrypted_message[0]
                 user_input = decrypted_message[1]
                 secret = database.search("users", "username", user, "fa_secret").split(":")[1]
-                result = TOTP.totp_verify(secret, user_input)
+                decrypted_secret = decrypt_string(DB_PRIVATE_KEY ,secret)
+                result = TOTP.totp_verify(decrypted_secret, user_input)
                 if result:
                     result = "0:ok"
                 else:

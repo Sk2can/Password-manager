@@ -10,6 +10,7 @@ class AuthWindow(QMainWindow):
         super().__init__(parent)
         self.load_ui("auth_window.ui")
         self.current_user = ""
+        self.current_key = ""
         self.response = ""
 
     def load_ui(self, ui_file):
@@ -26,7 +27,7 @@ class AuthWindow(QMainWindow):
         if hasattr(self, "auth_pushButton"):
             self.auth_pushButton.clicked.connect(self.auth)
         if hasattr(self, "registration_pushButton"):
-            self.registration_pushButton.clicked.connect(open_registration_window)
+                self.registration_pushButton.clicked.connect(self.open_registration_window)
 
     def auth(self):
         """
@@ -34,6 +35,7 @@ class AuthWindow(QMainWindow):
         """
         response = interaction.send_to_server(f"AUTH:{self.login_lineEdit.text()}:{self.password_lineEdit.text()}")
         if response.split(":")[0] == "0":
+            self.current_user = f"{self.login_lineEdit.text()}"
             self.current_user = f"{self.login_lineEdit.text()}"
             self.load_ui("totp_auth_window.ui")
         elif response.split(":")[0] == "1": # Неверный логин или пароль
@@ -62,9 +64,13 @@ class AuthWindow(QMainWindow):
         self.main_window.show()
         self.close()
 
-def open_registration_window():
-    """
-    Функция инициализации диалогового окна регистрации.
-    """
-    registration_window = RegistrationWindow()
-    registration_window.exec_()
+    def open_registration_window(self):
+        """
+        Функция инициализации диалогового окна регистрации.
+        """
+        response = interaction.send_to_server(f"AUTH::")  # Проверка доступности сервера
+        if response.split(":")[0] == "2":  # Нет доступа к серверу
+            self.error_label.setText("Сервер недоступен!")
+        else:
+            registration_window = RegistrationWindow()
+            registration_window.exec_()

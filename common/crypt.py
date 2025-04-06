@@ -1,8 +1,8 @@
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.padding import PKCS7
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import base64
 import os
 
@@ -89,7 +89,7 @@ def decrypt_large_data(private_key_pem, encrypted_data):
     :param encrypted_data: Зашифрованная строка с разделителями блоков.
     :type encrypted_data: str
     :param private_key_pem: Приватный ключ для расшифровки.
-    :type private_key_pem: str
+    :type private_key_pem: bytes
     :return: Расшифрованная строка.
     """
 
@@ -202,13 +202,4 @@ def decrypt_string(key_string, encrypted_data_base64):
 
 # Пример использования
 if __name__ == "__main__":
-    key_string = "mysecretkey12345"  # Строка-ключ
-    plaintext = "Привет, это секретное сообщение!"
-
-    # Шифрование
-    encrypted_data_base64 = encrypt_string(key_string, plaintext)
-    print(f"Зашифрованные данные (Base64): {encrypted_data_base64}")
-
-    # Дешифрование
-    decrypted_text = decrypt_string(key_string, encrypted_data_base64)
-    print(f"Расшифрованные данные: {decrypted_text}")
+    pass
