@@ -9,6 +9,7 @@ class AuthWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.load_ui("auth_window.ui")
+        self.login_lineEdit.setFocus()
         self.current_user = ""
         self.current_key = ""
         self.response = ""
@@ -38,6 +39,7 @@ class AuthWindow(QMainWindow):
             self.current_user = f"{self.login_lineEdit.text()}"
             self.current_user = f"{self.login_lineEdit.text()}"
             self.load_ui("totp_auth_window.ui")
+            self.totp_lineEdit.setFocus()
         elif response.split(":")[0] == "1": # Неверный логин или пароль
             self.error_label.setText("Неправильный логин или пароль!")
         elif response.split(":")[0] == "2": # Нет доступа к серверу

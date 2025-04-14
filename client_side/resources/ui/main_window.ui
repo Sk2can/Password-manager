@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Password manager</string>
+   <string>Vaultary</string>
   </property>
   <property name="documentMode">
    <bool>true</bool>
@@ -40,7 +40,7 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="Add_pass">
     <property name="tearOffEnabled">
      <bool>true</bool>
     </property>
@@ -48,7 +48,7 @@
      <string>Добавить пароль</string>
     </property>
    </widget>
-   <addaction name="menu"/>
+   <addaction name="Add_pass"/>
   </widget>
  </widget>
  <resources/>

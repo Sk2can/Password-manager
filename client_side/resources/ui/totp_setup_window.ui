@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Настройка TOTP</string>
+   <string>Vaultary</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -28,14 +28,14 @@
     </widget>
    </item>
    <item>
+    <widget class="QGraphicsView" name="qr_graphicsView"/>
+   </item>
+   <item>
     <widget class="QLabel" name="secret_key_label">
      <property name="text">
       <string>secret_key</string>
      </property>
     </widget>
-   </item>
-   <item>
-    <widget class="QGraphicsView" name="qr_graphicsView"/>
    </item>
    <item>
     <widget class="QLabel" name="label_3">

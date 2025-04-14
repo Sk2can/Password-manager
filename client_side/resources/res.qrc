@@ -1,5 +1,12 @@
 <RCC>
   <qresource prefix="png">
+    <file>icons/key.png</file>
+    <file>icons/close_button.png</file>
+    <file>icons/crop_square.png</file>
+    <file>icons/minimize_button.png</file>
     <file>icons/logo.png</file>
+  </qresource>
+  <qresource prefix="Fonts">
+    <file>OpenSans.ttf</file>
   </qresource>
 </RCC>

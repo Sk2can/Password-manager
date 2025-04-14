@@ -1,3 +1,4 @@
+import pywinstyles
 from totp_setup_window import TOTPSetupWindow
 from common import consts, interaction
 from PyQt5.QtWidgets import QDialog
@@ -12,6 +13,7 @@ class RegistrationWindow(QDialog, Form):
         super().__init__(parent)
         self.response = ""
         self.setupUi(self)
+        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
         # Сигналы
         self.register_pushButton.clicked.connect(self.create_user)
