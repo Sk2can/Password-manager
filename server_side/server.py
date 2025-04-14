@@ -28,20 +28,20 @@ def handle_client(client_socket):
         elif cmd == "REG":
             try:
                 username, password = decrypted_message[0], decrypted_message[1]
-                result = database.add_user(username, password)
+                result = database.add_user(username, password, cursor=None)
             except Exception as e:
                 print(f"Error: {e}")
         elif cmd == "TOTP":
             try:
                 user = decrypted_message[0]
-                result = database.search("users", "username", user, "fa_secret")
+                result = database.search("users", "username", user, "fa_secret_encrypted")
             except Exception as e:
                 print(f"Error: {e}")
         elif cmd == "VERIFY":
             try:
                 user = decrypted_message[0]
                 user_input = decrypted_message[1]
-                secret = database.search("users", "username", user, "fa_secret").split(":")[1]
+                secret = database.search("users", "username", user, "fa_secret_encrypted").split(":")[1]
                 decrypted_secret = decrypt_string(DB_PRIVATE_KEY ,secret)
                 result = TOTP.totp_verify(decrypted_secret, user_input)
                 if result:
