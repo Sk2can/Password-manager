@@ -34,29 +34,27 @@ class AuthWindow(QMainWindow):
         """
         Функция авторизации в приложении.
         """
-        response = interaction.send_to_server(f"AUTH:{self.login_lineEdit.text()}:{self.password_lineEdit.text()}")
-        if response.split(":")[0] == "0":
-            self.current_user = f"{self.login_lineEdit.text()}"
+        response = interaction.send_to_server(f"AUTH|{self.login_lineEdit.text()}|{self.password_lineEdit.text()}")
+        if response.split("|")[0] == "0":
             self.current_user = f"{self.login_lineEdit.text()}"
             self.load_ui("totp_auth_window.ui")
             self.totp_lineEdit.setFocus()
         elif response.split(":")[0] == "1": # Неверный логин или пароль
             self.error_label.setText("Неправильный логин или пароль!")
-        elif response.split(":")[0] == "2": # Нет доступа к серверу
-            self.error_label.setText(response.split(":")[1])
+        elif response.split("|")[0] == "2": # Нет доступа к серверу
+            self.error_label.setText(response.split("|")[1])
 
     def verify_code(self):
         """
         Функция проверки второго фактора TOTP.
         """
-        response = interaction.send_to_server(f"VERIFY:{self.current_user}:{self.totp_lineEdit.text()}")
-        if response.split(":")[0] == "0":
+        response = interaction.send_to_server(f"VERIFY|{self.current_user}|{self.totp_lineEdit.text()}")
+        if response.split("|")[0] == "0":
             self.open_main_window()
-        elif response.split(":")[0] == "1": # Неправильный код
+        elif response.split("|")[0] == "1": # Неправильный код
             self.error_label.setText("Неправильный код!")
-        elif response.split(":")[0] == "2": # Нет доступа к серверу
+        elif response.split("|")[0] == "2": # Нет доступа к серверу
             self.error_label.setText("Сервер недоступен!")
-
 
     def open_main_window(self):
         """
@@ -70,8 +68,8 @@ class AuthWindow(QMainWindow):
         """
         Функция инициализации диалогового окна регистрации.
         """
-        response = interaction.send_to_server(f"AUTH::")  # Проверка доступности сервера
-        if response.split(":")[0] == "2":  # Нет доступа к серверу
+        response = interaction.send_to_server(f"AUTH||")  # Проверка доступности сервера
+        if response.split("|")[0] == "2":  # Нет доступа к серверу
             self.error_label.setText("Сервер недоступен!")
         else:
             registration_window = RegistrationWindow()

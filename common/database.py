@@ -119,7 +119,7 @@ def initialize_database():
         """)
 
     except Exception as e:
-        print(f"Ошибка при инициализации базы данных: {e}")
+        print(f"Ошибка при инициализации базы данных| {e}")
 
     finally:
         cursor.close()
@@ -136,9 +136,9 @@ def db_connect(func):
             result = func(*args, **kwargs)
             conn.commit()
         except pymysql.connect.Error as err:
-            print(f"Ошибка: {err}")
+            print(f"Ошибка| {err}")
             error = str(err).split(", ")
-            result = error[0][1:] + ":" + error[1][1:-2]
+            result = error[0][1:] + "|" + error[1][1:-2]
         finally:
             cursor.close()
             conn.close()
@@ -156,7 +156,7 @@ def add_password(username, password, title, url, notes, cursor=None):
     values = (username, password, title, url, notes)
     # Выполняем запрос
     cursor.execute(query, values)
-    status = f"0:ok"
+    status = f"0|ok"
     return status
 
 @db_connect
@@ -183,7 +183,7 @@ def add_user(username, password, cursor=None):
 
     # Выполняем запрос
     cursor.execute(query, values)
-    status = f"0:{secret_key}"
+    status = f"0|{secret_key}"
     return status
 
 @db_connect
@@ -204,16 +204,16 @@ def auth_user(username, password, cursor=None):
     result = cursor.fetchone()
 
     if result is None:
-        return "1:User not found"
+        return "1|User not found"
 
     # Извлекаем хэш пароля из базы данных
     stored_password_hash = result[0]
 
     # Проверяем пароль
     if bcrypt.checkpw(password.encode("utf-8"), stored_password_hash.encode("utf-8")):
-        return "0:ok"
+        return "0|ok"
     else:
-        return "2:wrong password"
+        return "2|wrong password"
 
 @db_connect
 def search(table, key_column, key_value, field, cursor=None):
@@ -235,11 +235,11 @@ def search(table, key_column, key_value, field, cursor=None):
     # Составление запроса для поиска
     query = f"SELECT {field} FROM {table} WHERE {key_column} = %s"
     cursor.execute(query, (key_value,))
-    result = f"0:{cursor.fetchone()[0]}"
+    result = f"0|{cursor.fetchone()[0]}"
 
     if result is None:
         print("Пользователь не найден.")
-        result = "1:user not found"
+        result = "1|user not found"
     return result
 
 if __name__ == "__main__":

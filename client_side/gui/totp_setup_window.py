@@ -24,8 +24,8 @@ class TOTPSetupWindow(QDialog, Form):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint) # Удаление кнопки вопроса
-        #self.totp_lineEdit.setOverwriteMode(True)
-        encrypted_totp_code = send_to_server(f"TOTP:{user}").split(":")[1]
+        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
+        encrypted_totp_code = send_to_server(f"TOTP|{user}").split("|")[1]
         totp_code = decrypt_string(DB_PRIVATE_KEY, encrypted_totp_code)
         # Создание URI для Google Authenticator
         self.totp_uri = pyotp.TOTP(totp_code).provisioning_uri(

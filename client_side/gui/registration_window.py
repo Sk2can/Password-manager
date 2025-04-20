@@ -28,8 +28,8 @@ class RegistrationWindow(QDialog, Form):
             self.error_label.setText("Пароли не совпадают!"); return
         elif len(self.password_lineEdit.text()) < 16:
             self.error_label.setText("Пароль должен быть не менее 16 символов!"); return
-        self.response = interaction.send_to_server(f"REG:{self.login_lineEdit.text()}:{self.password_lineEdit.text()}")
-        if re.search("0:.*", self.response):
+        self.response = interaction.send_to_server(f"REG|{self.login_lineEdit.text()}|{self.password_lineEdit.text()}")
+        if re.search("0|.*", self.response):
             self.close()
             self.totp_setup_window = TOTPSetupWindow(self.login_lineEdit.text(), self.password_lineEdit.text())
             self.totp_setup_window.exec_()

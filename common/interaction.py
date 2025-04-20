@@ -28,10 +28,10 @@ def send_to_server(string):
     """
     client = init_client()  # Создание объекта для обмена данными
     if client == 2: # Возврат ошибки создания соединения
-        return f"{client}:Сервер недоступен!"
+        return f"{client}|Сервер недоступен!"
     client_private_key, server_public_key = crypt.generate_key_pair() # Генерация пары ключей
     client_public_key = client.recv(4096).decode("utf-8") # Получение ключа для шифрования сообщения серверу
-    message = server_public_key.decode("utf-8") + ":" + string # Формирование сообщения для клиента
+    message = server_public_key.decode("utf-8") + "|" + string # Формирование сообщения для клиента
     encrypted_data = crypt.encrypt_large_data(client_public_key, message)
     client.send(encrypted_data.encode("utf-8")) # Отправка сообщения на сервер
     response = client.recv(4096).decode("utf-8") # Получение зашифрованного сообщение от сервера
