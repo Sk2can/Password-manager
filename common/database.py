@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from common.crypt import encrypt_string
 from common.consts import ROOT
 from dotenv import load_dotenv
@@ -82,14 +82,14 @@ def initialize_database():
         # Создаем таблицу Credentials, если она не существует
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS Credentials (
-            id INTEGER PRIMARY KEY AUTO_INCREMENT ,
+            id INTEGER PRIMARY KEY AUTO_INCREMENT,
             user_fk VARCHAR(32) NOT NULL,
             service VARCHAR(32),
             login VARCHAR(64) NOT NULL,
             password_encrypted VARCHAR(64) NOT NULL,
             url TEXT,
-            notes TEXT,
             category_id INTEGER,
+            notes TEXT,
             created_at DATETIME,
             updated_at DATETIME,
             FOREIGN KEY (user_fk) REFERENCES Users(username) ON DELETE CASCADE,
@@ -145,15 +145,45 @@ def db_connect(func):
             return result
     return wrapper
 
+def convert_dates_tuple(data):
+    return tuple(
+        tuple(
+            value.strftime("%Y-%m-%d %H:%M:%S") if isinstance(value, (datetime, date)) else value
+            for value in row
+        )
+        for row in data
+    )
+
 @db_connect
-def add_password(username, password, title, url, notes, cursor=None):
+def add_credential(user_fk, service, login, password_encrypted, url, category_id, notes, cursor=None):
     """
     Добавление нового пароля пользователя.
+    :param user_fk: Внешний ключ на пользователя.
+    :type user_fk: str
+    :param service: Название сервиса.
+    :type service: str
+    :param login: Логин пользователя.
+    :type login: str
+    :param password_encrypted: Зашифрованный пароль.
+    :type password_encrypted: str
+    :param url: Ссылка на сервис.
+    :type url: str
+    :param category_id: Id категории, к которой принадлежит пароль.
+    :type category_id: str
+    :param notes: Заметки для пароля.
+    :type notes: str
+    :return: Код возврата.
     """
 
     # SQL-запрос для добавления записи
-    query = "INSERT INTO passwords (username, password, title, url, notes) VALUES (%s, %s, %s, %s, %s)"
-    values = (username, password, title, url, notes)
+    now = datetime.now()
+    time_format = "%Y-%m-%d %H:%M:%S"
+    created_at = f"{now:{time_format}}"
+    password_encrypted = encrypt_string(DB_PRIVATE_KEY, password_encrypted)
+
+    query = "INSERT INTO credentials (user_fk, service, login, password_encrypted, url, category_id, notes, created_at)\
+     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (user_fk, service, login, password_encrypted, url, category_id, notes, created_at)
     # Выполняем запрос
     cursor.execute(query, values)
     status = f"0|ok"
