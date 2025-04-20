@@ -328,9 +328,6 @@
         <verstretch>8</verstretch>
        </sizepolicy>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(24, 24, 27);</string>
-      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
         <number>0</number>
@@ -355,9 +352,6 @@
            <weight>75</weight>
            <bold>true</bold>
           </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color: rgb(221, 221, 221);</string>
          </property>
          <property name="text">
           <string>Vaultary</string>
