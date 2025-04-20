@@ -16,7 +16,6 @@ def init_client():
     except ConnectionRefusedError:
         return 2
 
-
 def send_to_server(string):
     """
     Отправляет данные на сервер в виде зашифрованной строки.

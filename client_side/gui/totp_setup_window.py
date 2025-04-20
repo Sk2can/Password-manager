@@ -1,16 +1,17 @@
+import pywinstyles
 from PyQt5.QtWidgets import QDialog, QGraphicsScene
 from dotenv import load_dotenv
-
 from common.consts import ROOT
 from common.interaction import send_to_server
 from common.crypt import decrypt_string
-from PyQt5.QtCore import QRectF, Qt
+from PyQt5.QtCore import QRectF
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic, QtCore
 from common import consts
 import qrcode
 import pyotp
 import os
+
 
 # Загружаем переменные из .env
 load_dotenv(f"{ROOT}/critical.env")
@@ -20,7 +21,7 @@ Form, Base = uic.loadUiType(f"{consts.UI}totp_setup_window.ui")
 
 
 class TOTPSetupWindow(QDialog, Form):
-    def __init__(self,user, password, parent=None):
+    def __init__(self,user, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint) # Удаление кнопки вопроса

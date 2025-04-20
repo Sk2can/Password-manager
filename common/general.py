@@ -1,5 +1,7 @@
 import re
 
+from PyQt5.QtWidgets import QWidget, QLayout
+
 
 def is_valid_windows_filename(filename):
     """
@@ -35,6 +37,28 @@ def is_valid_windows_filename(filename):
 
     return True
 
+def reset_interface(obj, window_ui):
+    # Удаляем основной макет
+    if obj.layout():
+        old_layout = obj.layout()
+        QWidget().setLayout(old_layout)  # Переносим макет в пустой виджет для удаления
+    # Удаляем дочерние виджеты
+    for child in obj.children():
+        if isinstance(child, QWidget):  # Если это виджет
+            child.setParent(None)
+        elif isinstance(child, QLayout):  # Если это макет
+            clear_layout(obj, child)
+    obj.load_ui(window_ui)
+
+def clear_layout(obj, layout):
+    if layout:
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.setParent(None)
+            else:
+                obj.clear_layout(item.layout())
 
 # Пример использования
 if __name__ == "__main__":

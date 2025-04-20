@@ -31,7 +31,7 @@ class RegistrationWindow(QDialog, Form):
         self.response = interaction.send_to_server(f"REG|{self.login_lineEdit.text()}|{self.password_lineEdit.text()}")
         if re.search("0|.*", self.response):
             self.close()
-            self.totp_setup_window = TOTPSetupWindow(self.login_lineEdit.text(), self.password_lineEdit.text())
+            self.totp_setup_window = TOTPSetupWindow(self.login_lineEdit.text())
             self.totp_setup_window.exec_()
         else:
             self.error_label.setText("Логин уже существует!")

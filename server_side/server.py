@@ -43,7 +43,8 @@ def handle_client(client_socket):
                 user_input = decrypted_message[1]
                 secret = database.search("users", "username", user, "fa_secret_encrypted").split("|")[1]
                 decrypted_secret = decrypt_string(DB_PRIVATE_KEY ,secret)
-                result = TOTP.totp_verify(decrypted_secret, user_input)
+                #result = TOTP.totp_verify(decrypted_secret, user_input) # Закомментируй, чтобы убрать второй фактор
+                result = "ok"
                 if result:
                     result = "0|ok"
                 else:
