@@ -28,7 +28,7 @@ class AuthWindow(QMainWindow):
         if hasattr(self, "auth_pushButton"):
             self.auth_pushButton.clicked.connect(self.auth)
         if hasattr(self, "registration_pushButton"):
-                self.registration_pushButton.clicked.connect(self.open_registration_window)
+            self.registration_pushButton.clicked.connect(self.open_registration_window)
 
     def auth(self):
         """
@@ -60,7 +60,7 @@ class AuthWindow(QMainWindow):
         """
         Функция инициализации главного окна приложения.
         """
-        self.main_window = MainWindow()
+        self.main_window = MainWindow(self.current_user)
         self.main_window.show()
         self.close()
 

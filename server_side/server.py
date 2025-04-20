@@ -51,6 +51,46 @@ def handle_client(client_socket):
                     result = "1|wrong time password"
             except Exception as e:
                 print(f"Error: {e}")
+        elif cmd == "GET_PASSWORDS":
+            try:
+                user = decrypted_message[0]
+                result = database.search_all("credentials", "user_fk", user)
+                # Преобразуем в список списков
+                mutable_data = [list(row) for row in result]
+                ind = 0
+                for cred in mutable_data:
+                    password = decrypt_string(DB_PRIVATE_KEY ,cred[4])
+                    mutable_data[ind][4] = password
+                    ind+=1
+                # Обратно в кортеж кортежей
+                result = tuple(tuple(row) for row in mutable_data)
+                if result != "()":
+                    result = f"{result}" # Конвертируем в строку для передачи
+                else:
+                    result = "1|"
+            except Exception as e:
+                print(f"Error| {e}")
+        elif cmd == "ADD_CREDENTIAL":
+            try:
+                user_fk = decrypted_message[0]
+                service = decrypted_message[1]
+                login = decrypted_message[2]
+                password_encrypted = decrypted_message[3]
+                url = decrypted_message[4]
+                category_id = None
+                notes = decrypted_message[6]
+                result = database.add_credential(user_fk, service, login, password_encrypted, url, category_id, notes)
+            except Exception as e:
+                print(f"Error| {e}")
+
+        elif cmd == "DELETE_ENTRY":
+            try:
+                table = decrypted_message[0]
+                key_column = decrypted_message[1]
+                key = decrypted_message[2]
+                result = database.delete_entry(table, key_column, key)
+            except Exception as e:
+                print(f"Error| {e}")
 
         encrypted_data = (crypt.encrypt_large_data(server_public_key, result)) # Шифрование данных для отправки клиенту
         client_socket.sendall(encrypted_data.encode("utf-8")) # Отправка данных клиенту
