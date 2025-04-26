@@ -3,6 +3,8 @@ from PyQt5 import uic, QtCore
 from common import consts, interaction
 import pywinstyles
 
+from common.general import generate_password
+
 
 class AddPasswordWindow(QDialog):
     def __init__(self,user, parent=None):
@@ -30,6 +32,8 @@ class AddPasswordWindow(QDialog):
             self.clear_pushButton.clicked.connect(self.reset_interface)
         if hasattr(self, "add_pushButton"):
             self.add_pushButton.clicked.connect(self.add_credential)
+        if hasattr(self, "generate_pushButton"):
+            self.generate_pushButton.clicked.connect(self.generate_password)
 
     def check_last_one_enabled(self):
         checked_boxes = [cb for cb in self.checkboxes if cb.isChecked()]
@@ -68,3 +72,12 @@ class AddPasswordWindow(QDialog):
 {self.login_lineEdit.text()}|{self.password_lineEdit.text()}|{self.URL_lineEdit.text()}|\
 {self.category_comboBox.currentText()}|{self.notes_plainTextEdit.toPlainText()}")
         print(response)
+
+    def generate_password(self):
+        capitals = self.capital_checkBox.isChecked()
+        lowercase = self.lowercase_checkBox.isChecked()
+        numbers = self.numbers_checkBox.isChecked()
+        symbols = self.special_checkBox.isChecked()
+        length = self.length_spinBox.value()
+        password = generate_password(length, lowercase, numbers, capitals, symbols)
+        self.password_lineEdit.setText(password)

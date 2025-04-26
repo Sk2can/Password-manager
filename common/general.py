@@ -1,4 +1,6 @@
+import random
 import re
+import string
 from PyQt5.QtWidgets import QWidget, QLayout
 from common import interaction
 
@@ -75,8 +77,23 @@ def get_row_as_dict(table, row_index):
 
     return row_data
 
+def generate_password(length=16, use_lower=True, use_digits=True, use_upper=True, use_symbols=True):
+    chars = ""
+    if use_lower:
+        chars += string.ascii_lowercase
+    if use_upper:
+        chars += string.ascii_uppercase
+    if use_digits:
+        chars += string.digits
+    if use_symbols:
+        chars += "~!?@#$%^&*_-+()[]{}><.,;"
 
+    if not chars:
+        raise ValueError("Нужно выбрать хотя бы один тип символов!")
+
+    password = ''.join(random.choice(chars) for _ in range(length))
+    return password
 
 # Пример использования
 if __name__ == "__main__":
-    pass
+    print(generate_password(1, True, True, True, True))

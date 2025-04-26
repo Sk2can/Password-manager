@@ -1,7 +1,10 @@
+
 from PyQt5.QtWidgets import QDialog, QCheckBox
 from PyQt5 import uic, QtCore
 from common import consts, interaction
 import pywinstyles
+
+from common.general import generate_password
 
 
 class EditPasswordWindow(QDialog):
@@ -35,6 +38,8 @@ class EditPasswordWindow(QDialog):
         # Подключение сигналов
         if hasattr(self, "confirm_pushButton"):
             self.confirm_pushButton.clicked.connect(self.edit_credential)
+        if hasattr(self, "generate_pushButton"):
+            self.generate_pushButton.clicked.connect(self.generate_password)
 
     def check_last_one_enabled(self):
         checked_boxes = [cb for cb in self.checkboxes if cb.isChecked()]
@@ -56,3 +61,12 @@ class EditPasswordWindow(QDialog):
                    "notes": self.notes_plainTextEdit.toPlainText()}
 
         response = interaction.send_to_server(f"EDIT_CREDENTIAL|{table}|{where_clause}|{where_params}|{updates}")
+
+    def generate_password(self):
+        capitals = self.capital_checkBox.isChecked()
+        lowercase = self.lowercase_checkBox.isChecked()
+        numbers = self.numbers_checkBox.isChecked()
+        symbols = self.symbols_checkBox.isChecked()
+        length = self.length_spinBox.value()
+        password = generate_password(length, lowercase, numbers, capitals, symbols)
+        self.password_lineEdit.setText(password)
