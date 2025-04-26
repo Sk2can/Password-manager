@@ -4,7 +4,8 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QWidget, QLayout, QMenu, QAction, QMessageBox
 from client_side.gui.add_password_window import AddPasswordWindow
-from common import consts, interaction
+from client_side.gui.edit_password_window import EditPasswordWindow
+from common import consts, interaction, general
 from PyQt5 import uic, QtCore
 
 from common.general import reset_interface
@@ -105,9 +106,11 @@ class MainWindow(QMainWindow):
 
             menu.exec_(self.tableWidget.viewport().mapToGlobal(pos))
 
-    def edit_row(self, row):
-        index = self.tableWidget.item(row, 0).data(Qt.UserRole)
-        print(f"Редактировать строку: {index}")
+    def edit_row(self, row_index):
+        row_data = general.get_row_as_dict(self.tableWidget, row_index)
+        db_index = self.tableWidget.item(row_index, 0).data(Qt.UserRole)
+        edit_password_window = EditPasswordWindow(row_data, db_index)
+        edit_password_window.exec_()
 
     def delete_row(self, row):
         index = self.tableWidget.item(row, 0).data(Qt.UserRole)

@@ -272,5 +272,84 @@ def search(table, key_column, key_value, field, cursor=None):
         result = "1|user not found"
     return result
 
+@db_connect
+def search_all(table, fk_key_column, fk_key_value, cursor=None):
+    """
+    Поиск всех полей соответствующих внешнему ключу.
+    :param table: Название таблицы.
+    :type table: str
+    :param fk_key_column: столбец внешних ключей.
+    :type fk_key_column: str
+    :param fk_key_value: значение внешнего ключа.
+    :type fk_key_value: str
+    :return: Результирующая строка
+    :rtype: str
+    """
+
+    # Составление запроса для поиска
+    query = f"SELECT * FROM {table} WHERE {fk_key_column} = %s"
+    cursor.execute(query, (fk_key_value,))
+    result = cursor.fetchall()
+    result = convert_dates_tuple(result) # Конвертирование объектов дат в строки
+    if result == "0|()":
+        print("Записи не найдены.")
+        result = "1|no records found"
+    return result
+
+@db_connect
+def delete_entry(table, key_column, key, cursor=None):
+    """
+    Удаление записи по ключу.
+    :param table: Название таблицы.
+    :type table: str
+    :param key_column: Название столбца с первичными ключами.
+    :type key_column: str
+    :param key: Первичный ключ.
+    :type key: str
+    :return: Код возврата.
+    :rtype: str
+    """
+
+    # Составление запроса для поиска
+    query = f"DELETE FROM {table} WHERE {key_column} = %s"
+    cursor.execute(query, (key,))
+    result = "0|entry deleted"
+    return result
+
+@db_connect
+def edit_credential(table, updates: dict, where_clause: tuple, where_params: tuple, cursor=None):
+    """
+    Универсальный метод обновления записи в любой таблице.
+
+    :param table: Имя таблицы
+    :param updates: Словарь с колонками и новыми значениями
+    :param where_clause: Поля для условия (например: (id,))
+    :param where_params: Значения для условия (например: (5,))
+    """
+
+    # Формируем часть SET column1 = %s, column2 = %s ...
+    update_str = ""
+    values = ()
+    for column, value in updates.items():
+        update_str += column + " = %s, "
+        values+= (value,)
+    else:
+        update_str = update_str[:-2] # Удаляем последние 2 символа строки
+    # Формируем часть WHERE id1 = %s, id2 = %s...
+    clause_str = ""
+    for column in where_clause:
+        clause_str += column + " = %s, "
+    else:
+        clause_str = clause_str[:-2]
+    # Добавляем значения условий в кортеж для запроса
+    for value in where_params:
+        values += (value,)
+    # SQL-запрос для изменения записи
+    query = f"UPDATE {table} SET {update_str} WHERE {clause_str}"
+    # Выполняем запрос
+    cursor.execute(query, values)
+    status = f"0|ok"
+    return status
+
 if __name__ == "__main__":
     pass

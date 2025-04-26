@@ -1,5 +1,8 @@
-from common import database, TOTP, crypt
-from common.crypt import decrypt_string
+import ast
+from datetime import datetime
+
+from common import database, crypt, TOTP
+from common.crypt import decrypt_string, encrypt_string
 import threading
 import socket
 import os
@@ -43,7 +46,7 @@ def handle_client(client_socket):
                 user_input = decrypted_message[1]
                 secret = database.search("users", "username", user, "fa_secret_encrypted").split("|")[1]
                 decrypted_secret = decrypt_string(DB_PRIVATE_KEY ,secret)
-                #result = TOTP.totp_verify(decrypted_secret, user_input) # Закомментируй, чтобы убрать второй фактор
+                result = TOTP.totp_verify(decrypted_secret, user_input) # Закомментируй, чтобы убрать второй фактор
                 result = "ok"
                 if result:
                     result = "0|ok"
@@ -82,7 +85,21 @@ def handle_client(client_socket):
                 result = database.add_credential(user_fk, service, login, password_encrypted, url, category_id, notes)
             except Exception as e:
                 print(f"Error| {e}")
-
+        elif cmd == "EDIT_CREDENTIAL":
+            try:
+                table = decrypted_message[0]
+                where_clause = ast.literal_eval(decrypted_message[1]) # Преобразуем строку в кортеж
+                where_params = ast.literal_eval(decrypted_message[2])
+                updates = ast.literal_eval(decrypted_message[3]) # Преобразуем строку в словарь
+                now = datetime.now() # Получаем текущее время
+                time_format = "%Y-%m-%d %H:%M:%S"
+                change_at = f"{now:{time_format}}" # Преобразуем объект времени по заданному шаблону
+                updates["updated_at"] = change_at
+                password_encrypted = encrypt_string(DB_PRIVATE_KEY, updates["password_encrypted"]) # Шифруем пароль
+                updates["password_encrypted"] = password_encrypted
+                result = database.edit_credential(table, updates, where_clause, where_params)
+            except Exception as e:
+                print(f"Error| {e}")
         elif cmd == "DELETE_ENTRY":
             try:
                 table = decrypted_message[0]

@@ -1,6 +1,6 @@
 import re
-
 from PyQt5.QtWidgets import QWidget, QLayout
+from common import interaction
 
 
 def is_valid_windows_filename(filename):
@@ -59,6 +59,23 @@ def clear_layout(obj, layout):
                 widget.setParent(None)
             else:
                 obj.clear_layout(item.layout())
+
+def get_row_as_dict(table, row_index):
+    row_data = {}
+    column_count = table.columnCount()
+
+    for col in range(column_count):
+        header_item = table.horizontalHeaderItem(col)
+        key = header_item.text() if header_item else f"column_{col}"
+
+        cell_item = table.item(row_index, col)
+        value = cell_item.text() if cell_item else ""
+
+        row_data[key] = value
+
+    return row_data
+
+
 
 # Пример использования
 if __name__ == "__main__":
