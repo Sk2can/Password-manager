@@ -7,6 +7,7 @@ import pymysql
 import bcrypt
 import os
 
+
 # Загружаем переменные из .env
 load_dotenv(f"{ROOT}/critical.env")
 DB_HOST = os.getenv("DB_HOST")
@@ -126,6 +127,13 @@ def initialize_database():
         conn.close()
 
 def db_connect(func):
+    """
+    Декоратор для реализации подключения к БД.
+
+    :param func: Функция для обертывания.
+    :type func: function
+    """
+
     def wrapper(*args, **kwargs):
         # Подключаемся к базе данных
         conn = get_db_connection("password_manager")
@@ -146,6 +154,14 @@ def db_connect(func):
     return wrapper
 
 def convert_dates_tuple(data):
+    """
+    Инициализация или проверка БД.
+    :param data: Кортеж с датой для преобразования формата.
+    :type data: tuple
+    :return: Кортеж с преобразованной датой.
+    :rtype data: tuple
+    """
+
     return tuple(
         tuple(
             value.strftime("%Y-%m-%d %H:%M:%S") if isinstance(value, (datetime, date)) else value
@@ -350,6 +366,7 @@ def edit_credential(table, updates: dict, where_clause: tuple, where_params: tup
     cursor.execute(query, values)
     status = f"0|ok"
     return status
+
 
 if __name__ == "__main__":
     pass

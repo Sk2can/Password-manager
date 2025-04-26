@@ -1,6 +1,5 @@
 import ast
 from datetime import datetime
-
 from common import database, crypt, TOTP
 from common.crypt import decrypt_string, encrypt_string
 import threading

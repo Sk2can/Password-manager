@@ -1,9 +1,7 @@
-
 from PyQt5.QtWidgets import QDialog, QCheckBox
 from PyQt5 import uic, QtCore
 from common import consts, interaction
 import pywinstyles
-
 from common.general import generate_password
 
 
@@ -42,6 +40,10 @@ class EditPasswordWindow(QDialog):
             self.generate_pushButton.clicked.connect(self.generate_password)
 
     def check_last_one_enabled(self):
+        """
+        Функция, препятствующая выключению последнего чекбокса.
+        """
+
         checked_boxes = [cb for cb in self.checkboxes if cb.isChecked()]
         sender_cb = self.sender()
         # Если всего один включён и его пытаются выключить — отменяем
@@ -51,6 +53,10 @@ class EditPasswordWindow(QDialog):
             sender_cb.blockSignals(False)
 
     def edit_credential(self):
+        """
+        Отправка запроса на изменение пароля в БД.
+        """
+
         table = "credentials"
         where_clause = ("id",)
         where_params = (self.db_index,)
@@ -63,6 +69,10 @@ class EditPasswordWindow(QDialog):
         response = interaction.send_to_server(f"EDIT_CREDENTIAL|{table}|{where_clause}|{where_params}|{updates}")
 
     def generate_password(self):
+        """
+        Функция генерации случайного пароля.
+        """
+
         capitals = self.capital_checkBox.isChecked()
         lowercase = self.lowercase_checkBox.isChecked()
         numbers = self.numbers_checkBox.isChecked()

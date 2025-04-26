@@ -21,6 +21,7 @@ class AuthWindow(QMainWindow):
         :param ui_file: Путь к ui файлу.
         :type ui_file: str
         """
+
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
         # Подключение сигналов
         if hasattr(self, "auth_totp_pushButton"):
@@ -34,6 +35,7 @@ class AuthWindow(QMainWindow):
         """
         Функция авторизации в приложении.
         """
+
         response = interaction.send_to_server(f"AUTH|{self.login_lineEdit.text()}|{self.password_lineEdit.text()}")
         if response.split("|")[0] == "0":
             self.current_user = f"{self.login_lineEdit.text()}"
@@ -48,6 +50,7 @@ class AuthWindow(QMainWindow):
         """
         Функция проверки второго фактора TOTP.
         """
+
         response = interaction.send_to_server(f"VERIFY|{self.current_user}|{self.totp_lineEdit.text()}")
         if response.split("|")[0] == "0":
             self.open_main_window()
@@ -60,6 +63,7 @@ class AuthWindow(QMainWindow):
         """
         Функция инициализации главного окна приложения.
         """
+
         self.main_window = MainWindow(self.current_user)
         self.main_window.show()
         self.close()
@@ -68,6 +72,7 @@ class AuthWindow(QMainWindow):
         """
         Функция инициализации диалогового окна регистрации.
         """
+
         response = interaction.send_to_server(f"AUTH||")  # Проверка доступности сервера
         if response.split("|")[0] == "2":  # Нет доступа к серверу
             self.error_label.setText("Сервер недоступен!")

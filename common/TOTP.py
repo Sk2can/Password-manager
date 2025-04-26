@@ -11,6 +11,7 @@ def generate_secret_key():
     :return: Секретный ключ для генерации TOTP-кодов.
     :rtype: str
     """
+
     # Генерация 10 байт случайных данных (16 символов в Base32)
     random_bytes = os.urandom(10)
     # Кодирование в Base32
@@ -28,6 +29,7 @@ def totp_verify(secret_key, user_input):
     :return: True если код верный, иначе False.
     :rtype: bool
     """
+
     #  Получение текущего одноразового пароля
     totp = pyotp.TOTP(secret_key)
     if totp.verify(user_input):

@@ -42,6 +42,7 @@ class TOTPSetupWindow(QDialog, Form):
         """
         Метод создания и отображения QR кода для Google authenticator.
         """
+
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -50,23 +51,17 @@ class TOTPSetupWindow(QDialog, Form):
         )
         qr.add_data(totp_uri)
         qr.make(fit=True)
-
         # Создаем изображение QR-кода
         img = qr.make_image(fill_color="black", back_color="white")
-
         # Сохраняем изображение во временный файл
         qr_path=f"{consts.TEMP}temp_qr.png".replace("/", "\\")
         img.save(qr_path)
-
         # Загружаем изображение в QPixmap
         pixmap = QPixmap(qr_path)
-
         # Создаем QGraphicsScene и добавляем изображение
         scene = QGraphicsScene()
         scene.addPixmap(pixmap)
         scene.setSceneRect(QRectF(pixmap.rect()))
-
         # Устанавливаем сцену в QGraphicsView
         self.qr_graphicsView.setScene(scene)
-
         os.remove(qr_path)

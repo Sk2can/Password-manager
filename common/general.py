@@ -2,7 +2,6 @@ import random
 import re
 import string
 from PyQt5.QtWidgets import QWidget, QLayout
-from common import interaction
 
 
 def is_valid_windows_filename(filename):
@@ -14,6 +13,7 @@ def is_valid_windows_filename(filename):
     :return: True если имя допустимо, иначе False.
     :rtype: bool
     """
+
     # Проверка длины имени файла
     if len(filename) > 255:
         return False
@@ -40,6 +40,14 @@ def is_valid_windows_filename(filename):
     return True
 
 def reset_interface(obj, window_ui):
+    """
+    Сбрасывает изменения в объекте окна.
+
+    :param obj: Объект окна для сброса.
+    :param window_ui: Имя файла с интерфейсом.
+    :type window_ui: str
+    """
+
     # Удаляем основной макет
     if obj.layout():
         old_layout = obj.layout()
@@ -53,6 +61,13 @@ def reset_interface(obj, window_ui):
     obj.load_ui(window_ui)
 
 def clear_layout(obj, layout):
+    """
+    Удаляет все объекты лейаута.
+
+    :param obj: Объект окна для сброса.
+    :param layout: Лейаут для отчистки.
+    """
+
     if layout:
         while layout.count():
             item = layout.takeAt(0)
@@ -63,6 +78,17 @@ def clear_layout(obj, layout):
                 obj.clear_layout(item.layout())
 
 def get_row_as_dict(table, row_index):
+    """
+    Сбрасывает изменения в объекте окна.
+
+    :param table: Объект таблицы.
+    :type table: object
+    :param row_index: Индекс записи в таблице.
+    :type row_index: int
+    :return row_data: Словарь с данными записи из таблицы
+    :rtype row_data: dict
+    """
+
     row_data = {}
     column_count = table.columnCount()
 
@@ -78,6 +104,23 @@ def get_row_as_dict(table, row_index):
     return row_data
 
 def generate_password(length=16, use_lower=True, use_digits=True, use_upper=True, use_symbols=True):
+    """
+    Генератор случайного пароля.
+
+    :param length: Длина пароля.
+    :type length: int
+    :param use_lower: Включение букв нижнего регистра.
+    :type use_lower: bool
+    :param use_digits: Включение цифр.
+    :type use_digits: bool
+    :param use_upper: Включение букв верхнего регистра.
+    :type use_upper: bool
+    :param use_symbols: Включение специальных символов.
+    :type use_symbols: bool
+    :return password: Случайно сгенерированный пароль.
+    :rtype password: str
+    """
+
     chars = ""
     if use_lower:
         chars += string.ascii_lowercase

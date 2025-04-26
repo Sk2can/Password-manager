@@ -22,6 +22,7 @@ class RegistrationWindow(QDialog, Form):
         """
         Функция регистрации нового пользователя.
         """
+
         if not ((self.password_lineEdit.text()) and (self.password_conf_lineEdit.text()) and (self.login_lineEdit.text())):
             self.error_label.setText("Заполните все поля!"); return
         elif self.password_lineEdit.text() != self.password_conf_lineEdit.text():

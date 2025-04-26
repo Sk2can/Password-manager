@@ -9,6 +9,7 @@ def init_client():
     :return: Объект подключения к серверу или код ошибки.
     :rtype: Объект класса socket или int
     """
+
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client.connect(("127.0.0.1", 5721))
@@ -25,6 +26,7 @@ def send_to_server(string):
     :return decrypted_message: Код возврата и сообщение от функции на сервере вида code:message
     :rtype decrypted_message: str
     """
+
     client = init_client()  # Создание объекта для обмена данными
     if client == 2: # Возврат ошибки создания соединения
         return f"{client}|Сервер недоступен!"

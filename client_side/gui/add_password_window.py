@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout
 from PyQt5 import uic, QtCore
 from common import consts, interaction
 import pywinstyles
-
 from common.general import generate_password
 
 
@@ -36,6 +35,10 @@ class AddPasswordWindow(QDialog):
             self.generate_pushButton.clicked.connect(self.generate_password)
 
     def check_last_one_enabled(self):
+        """
+        Функция, препятствующая выключению последнего чекбокса.
+        """
+
         checked_boxes = [cb for cb in self.checkboxes if cb.isChecked()]
         sender_cb = self.sender()
         # Если всего один включён и его пытаются выключить — отменяем
@@ -45,6 +48,10 @@ class AddPasswordWindow(QDialog):
             sender_cb.blockSignals(False)
 
     def reset_interface(self):
+        """
+        Сброс интерфейса к изначальному состоянию из .ui файла.
+        """
+
         # Удаляем основной макет
         if self.layout():
             old_layout = self.layout()
@@ -58,6 +65,9 @@ class AddPasswordWindow(QDialog):
         self.load_ui("passwords_add_window.ui")
 
     def clear_layout(self, layout):
+        """
+        Удаление всех элементов лейаута.
+        """
         if layout:
             while layout.count():
                 item = layout.takeAt(0)
@@ -68,12 +78,18 @@ class AddPasswordWindow(QDialog):
                     self.clear_layout(item.layout())
 
     def add_credential(self):
+        """
+        Отправка запроса серверу на добавление новой записи в таблицу credentials.
+        """
         response = interaction.send_to_server(f"ADD_CREDENTIAL|{self.user}|{self.service_lineEdit.text()}|\
 {self.login_lineEdit.text()}|{self.password_lineEdit.text()}|{self.URL_lineEdit.text()}|\
 {self.category_comboBox.currentText()}|{self.notes_plainTextEdit.toPlainText()}")
         print(response)
 
     def generate_password(self):
+        """
+        Функция генерации случайного пароля исходя из параметров пользователя.
+        """
         capitals = self.capital_checkBox.isChecked()
         lowercase = self.lowercase_checkBox.isChecked()
         numbers = self.numbers_checkBox.isChecked()
