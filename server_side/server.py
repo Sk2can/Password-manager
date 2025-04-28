@@ -43,7 +43,8 @@ def handle_client(client_socket):
             try:
                 user = decrypted_message[0]
                 user_input = decrypted_message[1]
-                secret = database.search("users", "username", user, "fa_secret_encrypted").split("|")[1]
+                secret = database.search("users", "username", user,
+                                         "fa_secret_encrypted").split("|")[1]
                 decrypted_secret = decrypt_string(DB_PRIVATE_KEY ,secret)
                 result = TOTP.totp_verify(decrypted_secret, user_input) # Закомментируй, чтобы убрать второй фактор
                 result = "ok"
@@ -63,6 +64,9 @@ def handle_client(client_socket):
                 for cred in mutable_data:
                     password = decrypt_string(DB_PRIVATE_KEY ,cred[4])
                     mutable_data[ind][4] = password
+                    category_name = database.search("categories", "id", mutable_data[ind][6],
+                                                  "name").split("|")[1]
+                    mutable_data[ind][6] = category_name
                     ind+=1
                 # Обратно в кортеж кортежей
                 result = tuple(tuple(row) for row in mutable_data)
@@ -72,6 +76,19 @@ def handle_client(client_socket):
                     result = "1|"
             except Exception as e:
                 print(f"Error| {e}")
+        elif cmd == "GET_CATEGORIES":
+            try:
+                user = decrypted_message[0]
+                result = database.search_all("categories", "user_fk", user)
+                categories = []
+                for tuple_i in result:
+                    categories.append(tuple_i[2])
+                if categories:
+                    result = f"{categories}" # Конвертируем в строку для передачи
+                else:
+                    result = "1|the user has no categories"
+            except Exception as e:
+                print(f"Error| {e}")
         elif cmd == "ADD_CREDENTIAL":
             try:
                 user_fk = decrypted_message[0]
@@ -79,7 +96,12 @@ def handle_client(client_socket):
                 login = decrypted_message[2]
                 password_encrypted = decrypted_message[3]
                 url = decrypted_message[4]
-                category_id = None
+                category_id = database.search("categories", "name", decrypted_message[5],
+                                              "id")
+                if category_id:
+                    category_id = category_id.split("|")[1]
+                else:
+                    database.add_entry(table="categories", user_fk=user_fk, name=decrypted_message[5])
                 notes = decrypted_message[6]
                 result = database.add_credential(user_fk, service, login, password_encrypted, url, category_id, notes)
             except Exception as e:

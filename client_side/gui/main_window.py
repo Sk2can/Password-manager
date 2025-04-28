@@ -3,6 +3,8 @@ import pywinstyles
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox
+from unicodedata import category
+
 from client_side.gui.add_password_window import AddPasswordWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
 from common import consts, interaction, general
@@ -19,7 +21,7 @@ class MainWindow(QMainWindow):
         self.lsts = () # Инициализация кортежа для полученных паролей
         self.response = "" # Инициализация строки ответа от сервера
         self.update_table()
-        self.add_tree_item(["Child 1.1", "Child 2", "Child 3"])
+        self.update_tree()
 
     def load_ui(self, ui_file):
         """
@@ -63,10 +65,20 @@ class MainWindow(QMainWindow):
         """
         Обновление таблицы окна.
         """
+
         response = interaction.send_to_server(f"GET_PASSWORDS|{self.user}")
         self.lsts = ast.literal_eval(response)
         for credential in self.lsts:
             self.add_row_to_table(credential)
+
+    def update_tree(self):
+        """
+        Обновление списка категорий.
+        """
+
+
+        response = interaction.send_to_server(f"GET_CATEGORIES|{self.user}")
+        self.add_tree_item(ast.literal_eval(response))
 
     def add_tree_item(self, children):
         """
@@ -75,18 +87,33 @@ class MainWindow(QMainWindow):
         :param children: Список элементов.
         :type children: list
         """
+
         # Создаём корневой элемент
+        parent_item = QStandardItem('Data base')
         model = QStandardItemModel()
         # Добавляем дочерние элементы
         for child_text in children:
             child_item = QStandardItem(child_text)
-            model.appendRow(child_item)
+            parent_item.appendRow(child_item)
+        model.appendRow(parent_item)
         model.setHeaderData(0, QtCore.Qt.Horizontal, 'Categories')
         self.treeView.setModel(model)
         self.treeView.expandAll()
 
-    def on_tree_item_clicked(self):
-        print("Кликнули на категорию")
+    def on_tree_item_clicked(self, index):
+        model = self.treeView.model()
+        item = model.itemFromIndex(index)
+        if not item.parent():  # Если у элемента нет родителя — значит это корень
+            for row in range(self.tableWidget.rowCount()):
+                self.tableWidget.showRow(row)
+        else:
+            text = index.data()
+            for row in range(self.tableWidget.rowCount()):
+                item = self.tableWidget.item(row, 4)
+                if item is not None and text.lower() in item.text().lower():
+                    self.tableWidget.setRowHidden(row, False)
+                else:
+                    self.tableWidget.setRowHidden(row, True)
 
     def open_add_password_window(self):
         """
@@ -99,6 +126,7 @@ class MainWindow(QMainWindow):
     def update_window(self):
         reset_interface(self,"main_window.ui")
         self.update_table()
+        self.update_tree()
 
     def open_context_menu(self, pos: QPoint):
         """
@@ -129,7 +157,7 @@ class MainWindow(QMainWindow):
 
         row_data = general.get_row_as_dict(self.tableWidget, row_index)
         db_index = self.tableWidget.item(row_index, 0).data(Qt.UserRole)
-        edit_password_window = EditPasswordWindow(row_data, db_index)
+        edit_password_window = EditPasswordWindow(self.user, row_data, db_index)
         edit_password_window.exec_()
 
     def delete_row(self, row):

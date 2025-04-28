@@ -1,3 +1,4 @@
+import ast
 from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout
 from PyQt5 import uic, QtCore
 from common import consts, interaction
@@ -10,12 +11,6 @@ class AddPasswordWindow(QDialog):
         super().__init__(parent)
         self.user = user
         self.load_ui("passwords_add_window.ui")
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
-        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
-        # Блокировка отключения последнего чекбокса
-        self.checkboxes = self.findChildren(QCheckBox)
-        for cb in self.checkboxes:
-            cb.toggled.connect(self.check_last_one_enabled)
 
     def load_ui(self, ui_file):
         """
@@ -33,6 +28,16 @@ class AddPasswordWindow(QDialog):
             self.add_pushButton.clicked.connect(self.add_credential)
         if hasattr(self, "generate_pushButton"):
             self.generate_pushButton.clicked.connect(self.generate_password)
+
+        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+        # Блокировка отключения последнего чекбокса
+        self.checkboxes = self.findChildren(QCheckBox)
+        for cb in self.checkboxes:
+            cb.toggled.connect(self.check_last_one_enabled)
+        categories = ast.literal_eval(interaction.send_to_server(f"GET_CATEGORIES|{self.user}"))
+        for category in categories:
+            self.category_comboBox.addItem(category)
 
     def check_last_one_enabled(self):
         """
@@ -81,10 +86,13 @@ class AddPasswordWindow(QDialog):
         """
         Отправка запроса серверу на добавление новой записи в таблицу credentials.
         """
-        response = interaction.send_to_server(f"ADD_CREDENTIAL|{self.user}|{self.service_lineEdit.text()}|\
+        if self.password_lineEdit.text():
+            interaction.send_to_server(f"ADD_CREDENTIAL|{self.user}|{self.service_lineEdit.text()}|\
 {self.login_lineEdit.text()}|{self.password_lineEdit.text()}|{self.URL_lineEdit.text()}|\
 {self.category_comboBox.currentText()}|{self.notes_plainTextEdit.toPlainText()}")
-        print(response)
+            self.close()
+        else:
+            self.error_label.setText("The password field must be filled in!")
 
     def generate_password(self):
         """

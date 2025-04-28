@@ -1,3 +1,4 @@
+import ast
 from PyQt5.QtWidgets import QDialog, QCheckBox
 from PyQt5 import uic, QtCore
 from common import consts, interaction
@@ -6,23 +7,12 @@ from common.general import generate_password
 
 
 class EditPasswordWindow(QDialog):
-    def __init__(self, row_data, db_index, parent=None):
+    def __init__(self, user, row_data, db_index, parent=None):
         super().__init__(parent)
         self.db_index = db_index
+        self.row_data = row_data
+        self.user = user
         self.load_ui("passwords_edit_window.ui")
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
-        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
-        # Блокировка отключения последнего чекбокса
-        self.checkboxes = self.findChildren(QCheckBox)
-        for cb in self.checkboxes:
-            cb.toggled.connect(self.check_last_one_enabled)
-        # Заполнение полей
-        self.service_lineEdit.setText(row_data["Service"])
-        self.login_lineEdit.setText(row_data["Login"])
-        self.password_lineEdit.setText(row_data["Password"])
-        self.url_lineEdit.setText(row_data["URL"])
-        #self.category_lineEdit.setText(row_data["Category"])
-        self.notes_plainTextEdit.setPlainText(row_data["Notes"])
 
     def load_ui(self, ui_file):
         """
@@ -38,6 +28,22 @@ class EditPasswordWindow(QDialog):
             self.confirm_pushButton.clicked.connect(self.edit_credential)
         if hasattr(self, "generate_pushButton"):
             self.generate_pushButton.clicked.connect(self.generate_password)
+
+        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+        # Блокировка отключения последнего чекбокса
+        self.checkboxes = self.findChildren(QCheckBox)
+        for cb in self.checkboxes:
+            cb.toggled.connect(self.check_last_one_enabled)
+        categories = ast.literal_eval(interaction.send_to_server(f"GET_CATEGORIES|{self.user}"))
+        for category in categories:
+            self.category_comboBox.addItem(category)
+        # Заполнение полей
+        self.service_lineEdit.setText(self.row_data["Service"])
+        self.login_lineEdit.setText(self.row_data["Login"])
+        self.password_lineEdit.setText(self.row_data["Password"])
+        self.url_lineEdit.setText(self.row_data["URL"])
+        self.notes_plainTextEdit.setPlainText(self.row_data["Notes"])
 
     def check_last_one_enabled(self):
         """
@@ -63,10 +69,15 @@ class EditPasswordWindow(QDialog):
         updates = {"service": self.service_lineEdit.text(),
                    "login": self.login_lineEdit.text(),
                    "password_encrypted": self.password_lineEdit.text(),
+                   #"category": self.category_lineEdit.currentText(),
                    "url": self.url_lineEdit.text(),
                    "notes": self.notes_plainTextEdit.toPlainText()}
+        if self.password_lineEdit.text():
+            interaction.send_to_server(f"EDIT_CREDENTIAL|{table}|{where_clause}|{where_params}|{updates}")
+            self.close()
+        else:
+            self.error_label.setText("The password field must be filled in!")
 
-        response = interaction.send_to_server(f"EDIT_CREDENTIAL|{table}|{where_clause}|{where_params}|{updates}")
 
     def generate_password(self):
         """

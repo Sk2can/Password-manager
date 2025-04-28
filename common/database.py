@@ -367,6 +367,34 @@ def edit_credential(table, updates: dict, where_clause: tuple, where_params: tup
     status = f"0|ok"
     return status
 
+@db_connect
+def add_entry(cursor=None, **kwargs):
+    """
+    Добавление новой записи в заданную таблицу.
+    :param table: Название таблицы.
+    :type table: str
+    :return: Код возврата.
+    :rtype : str
+    """
+
+    column_names = ""
+    values = []
+    for column, value in kwargs.items():
+        if column != "table":
+            column_names += f"{column}, "
+            values.append(value)
+    else:
+        column_names = column_names[:-2]
+    values_string = (len(values) * "%s, ")[:-2]
+
+    # SQL-запрос для добавления записи
+    query = f"INSERT INTO {kwargs['table']} ({column_names})\
+     VALUES ({values_string})"
+    # Выполняем запрос
+    cursor.execute(query, tuple(values))
+    status = f"0|ok"
+    return status
+
 
 if __name__ == "__main__":
     pass
