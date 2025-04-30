@@ -1,8 +1,9 @@
+import pywinstyles
 from PyQt5.QtWidgets import QMainWindow
 from common import consts, interaction
 from main_window import MainWindow
 from registration_window import RegistrationWindow
-from PyQt5 import uic
+from PyQt5 import uic, QtCore
 
 
 class AuthWindow(QMainWindow):
@@ -30,6 +31,9 @@ class AuthWindow(QMainWindow):
             self.auth_pushButton.clicked.connect(self.auth)
         if hasattr(self, "registration_pushButton"):
             self.registration_pushButton.clicked.connect(self.open_registration_window)
+
+        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def auth(self):
         """

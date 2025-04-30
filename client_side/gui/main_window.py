@@ -1,10 +1,8 @@
 import ast
 import pywinstyles
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt, QPoint, QTimer, QEvent
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox
-from unicodedata import category
-
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication
 from client_side.gui.add_password_window import AddPasswordWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
 from common import consts, interaction, general
@@ -18,6 +16,7 @@ class MainWindow(QMainWindow):
         pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.load_ui("main_window.ui")
         self.user = user # Сохранение логина текущего пользователя
+        self.restarting_to_login = False
         self.lsts = () # Инициализация кортежа для полученных паролей
         self.response = "" # Инициализация строки ответа от сервера
         self.update_table()
@@ -39,8 +38,18 @@ class MainWindow(QMainWindow):
         if hasattr(self, "update_pushButton"):
             self.update_pushButton.clicked.connect(self.update_window)
         if hasattr(self, "tableWidget"):
+            self.tableWidget.cellClicked.connect(self.on_table_item_clicked)
             self.tableWidget.customContextMenuRequested.connect(self.open_context_menu)
             self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+            self.tableWidget.setColumnHidden(6, True)
+            self.tableWidget.setColumnHidden(7, True)
+
+        # Таймер бездействия
+        self.inactivity_timer = QTimer(self)
+        self.inactivity_timer.setSingleShot(False)
+        self.inactivity_timer.timeout.connect(self.restart_to_login)
+        self.reset_inactivity_timer()
+        QApplication.instance().installEventFilter(self)
 
     def add_row_to_table(self, data):
         """
@@ -49,7 +58,8 @@ class MainWindow(QMainWindow):
         :param data: Кортеж с информацией о записи.
         :type data: tuple
         """
-        exclude_indices = {0, 1}  # индексы, которые нужно исключить (id из БД и название категории)
+
+        exclude_indices = {0, 1, 4}  # индексы, которые нужно исключить (id из БД и название категории)
         row_position = self.tableWidget.rowCount()  # получаем индекс новой строки
         self.tableWidget.insertRow(row_position)  # вставляем новую строку
 
@@ -60,6 +70,12 @@ class MainWindow(QMainWindow):
                 item.setData(Qt.UserRole, data[0])
                 self.tableWidget.setItem(row_position, column, item)
                 column+=1
+            elif i == 4:
+                stars = "*" * len(value)
+                item = QTableWidgetItem(str(stars))
+                item.setData(Qt.UserRole + 1, value)  # Сохраняем оригинальный текст в скрытых данных
+                self.tableWidget.setItem(row_position, column, item)
+                column += 1
 
     def update_table(self):
         """
@@ -70,6 +86,7 @@ class MainWindow(QMainWindow):
         self.lsts = ast.literal_eval(response)
         for credential in self.lsts:
             self.add_row_to_table(credential)
+        self.tableWidget.resizeColumnsToContents()
 
     def update_tree(self):
         """
@@ -135,17 +152,36 @@ class MainWindow(QMainWindow):
         :param pos: Координаты нажатия (передаются сами).
         :type pos: QPoint
         """
+
         item = self.tableWidget.itemAt(pos)
         if item:
             row = item.row()
             menu = QMenu(self)
-            action_edit = QAction("Редактировать", self)
-            action_delete = QAction("Удалить", self)
+            action_copy = QAction("Copy password", self)
+            action_edit = QAction("Edit", self)
+            action_delete = QAction("Delete", self)
+            action_copy.triggered.connect(lambda: self.copy_password(row))
             action_edit.triggered.connect(lambda: self.edit_row(row))
             action_delete.triggered.connect(lambda: self.delete_row(row))
+            menu.addAction(action_copy)
             menu.addAction(action_edit)
             menu.addAction(action_delete)
             menu.exec_(self.tableWidget.viewport().mapToGlobal(pos))
+
+    def copy_password(self, row):
+        """
+        Функция копирования пароля из таблицы.
+
+        :param row: Индекс записи в таблице окна.
+        :type row: int
+        """
+
+        item = self.tableWidget.item(row, 2)
+
+        if item:
+            password = item.data(Qt.UserRole + 1)
+            clipboard = QApplication.clipboard()
+            clipboard.setText(password)
 
     def edit_row(self, row_index):
         """
@@ -157,7 +193,8 @@ class MainWindow(QMainWindow):
 
         row_data = general.get_row_as_dict(self.tableWidget, row_index)
         db_index = self.tableWidget.item(row_index, 0).data(Qt.UserRole)
-        edit_password_window = EditPasswordWindow(self.user, row_data, db_index)
+        item = self.tableWidget.item(row_index, 2)
+        edit_password_window = EditPasswordWindow(self.user, row_data, item.data(Qt.UserRole + 1), db_index)
         edit_password_window.exec_()
 
     def delete_row(self, row):
@@ -182,3 +219,49 @@ class MainWindow(QMainWindow):
         if reply == QMessageBox.Yes:
             # здесь код удаления
             response = interaction.send_to_server(f"DELETE_ENTRY|credentials|id|{index}")
+
+    def on_table_item_clicked(self, row):
+        row_data = {}
+        self.textBrowser.clear()
+        notes = ""
+        for col in range(self.tableWidget.columnCount()):
+            header_item = self.tableWidget.horizontalHeaderItem(col)
+            header = header_item.text() if header_item else f"Column {col}"
+            item = self.tableWidget.item(row, col)
+            value = item.text() if item else ''
+            row_data[header] = value
+        for column, value in row_data.items():
+            if value:
+                if column == "URL":
+                    self.textBrowser.insertHtml(f"<b>{column}</b>: <a href={value}>{value}</a>. ")
+                elif column == "Notes":
+                    notes = f"<br><br><b>{column}</b>:<br>{value}"
+                else:
+                    self.textBrowser.insertHtml(f"<b>{column}</b>: {value}. ")
+        if notes:
+            self.textBrowser.insertHtml(notes)
+
+    def restart_to_login(self):
+        from client_side.gui.auth_window import AuthWindow
+        if self.restarting_to_login:
+            return  # Уже перезапускаемся, ничего не делаем
+
+        self.restarting_to_login = True  # Устанавливаем флаг
+
+        self.login_window = AuthWindow()
+        self.login_window.setObjectName("auth")
+        self.login_window.show()
+
+        for widget in QApplication.topLevelWidgets():
+            if widget.objectName() != "auth":
+                widget.close()
+
+    def eventFilter(self, obj, event):
+        if event.type() in (QEvent.MouseMove, QEvent.KeyPress, QEvent.MouseButtonPress):
+            self.reset_inactivity_timer()
+        return super().eventFilter(obj, event)
+
+    def reset_inactivity_timer(self):
+        """Сброс таймера бездействия."""
+        self.inactivity_timer.stop()
+        self.inactivity_timer.start(5 * 60 * 1000)  # 5 минут = 300000 мс

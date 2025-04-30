@@ -7,8 +7,9 @@ from common.general import generate_password
 
 
 class EditPasswordWindow(QDialog):
-    def __init__(self, user, row_data, db_index, parent=None):
+    def __init__(self, user, row_data, password, db_index, parent=None):
         super().__init__(parent)
+        self.password = password
         self.db_index = db_index
         self.row_data = row_data
         self.user = user
@@ -41,7 +42,7 @@ class EditPasswordWindow(QDialog):
         # Заполнение полей
         self.service_lineEdit.setText(self.row_data["Service"])
         self.login_lineEdit.setText(self.row_data["Login"])
-        self.password_lineEdit.setText(self.row_data["Password"])
+        self.password_lineEdit.setText(self.password)
         self.url_lineEdit.setText(self.row_data["URL"])
         self.notes_plainTextEdit.setPlainText(self.row_data["Notes"])
 
