@@ -263,5 +263,6 @@ class MainWindow(QMainWindow):
 
     def reset_inactivity_timer(self):
         """Сброс таймера бездействия."""
+
         self.inactivity_timer.stop()
         self.inactivity_timer.start(5 * 60 * 1000)  # 5 минут = 300000 мс
