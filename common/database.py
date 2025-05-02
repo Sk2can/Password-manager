@@ -354,9 +354,9 @@ def edit_credential(table, updates: dict, where_clause: tuple, where_params: tup
     # Формируем часть WHERE id1 = %s, id2 = %s...
     clause_str = ""
     for column in where_clause:
-        clause_str += column + " = %s, "
+        clause_str += column + " = %s AND "
     else:
-        clause_str = clause_str[:-2]
+        clause_str = clause_str[:-5]
     # Добавляем значения условий в кортеж для запроса
     for value in where_params:
         values += (value,)

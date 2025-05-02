@@ -86,13 +86,15 @@ class AddPasswordWindow(QDialog):
         """
         Отправка запроса серверу на добавление новой записи в таблицу credentials.
         """
-        if self.password_lineEdit.text():
+        if self.password_lineEdit.text() and self.category_comboBox.currentText():
             interaction.send_to_server(f"ADD_CREDENTIAL|{self.user}|{self.service_lineEdit.text()}|\
 {self.login_lineEdit.text()}|{self.password_lineEdit.text()}|{self.URL_lineEdit.text()}|\
 {self.category_comboBox.currentText()}|{self.notes_plainTextEdit.toPlainText()}")
             self.close()
-        else:
+        elif not self.password_lineEdit.text():
             self.error_label.setText("The password field must be filled in!")
+        elif not self.category_comboBox.currentText():
+            self.error_label.setText("The category field cannot be empty!")
 
     def generate_password(self):
         """

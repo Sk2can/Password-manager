@@ -28,7 +28,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGraphicsView" name="qr_graphicsView"/>
+    <widget class="QGraphicsView" name="qr_graphicsView">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="secret_key_label">

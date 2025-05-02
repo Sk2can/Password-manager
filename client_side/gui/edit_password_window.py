@@ -39,10 +39,14 @@ class EditPasswordWindow(QDialog):
         categories = ast.literal_eval(interaction.send_to_server(f"GET_CATEGORIES|{self.user}"))
         for category in categories:
             self.category_comboBox.addItem(category)
+
         # Заполнение полей
         self.service_lineEdit.setText(self.row_data["Service"])
         self.login_lineEdit.setText(self.row_data["Login"])
         self.password_lineEdit.setText(self.password)
+        comboBox_index = self.category_comboBox.findText(self.row_data["Category"])
+        if comboBox_index != -1:
+            self.category_comboBox.setCurrentIndex(comboBox_index)
         self.url_lineEdit.setText(self.row_data["URL"])
         self.notes_plainTextEdit.setPlainText(self.row_data["Notes"])
 
@@ -70,15 +74,17 @@ class EditPasswordWindow(QDialog):
         updates = {"service": self.service_lineEdit.text(),
                    "login": self.login_lineEdit.text(),
                    "password_encrypted": self.password_lineEdit.text(),
-                   #"category": self.category_lineEdit.currentText(),
+                   "user": self.user,
+                   "category": self.category_comboBox.currentText(),
                    "url": self.url_lineEdit.text(),
                    "notes": self.notes_plainTextEdit.toPlainText()}
-        if self.password_lineEdit.text():
+        if self.password_lineEdit.text() and self.category_comboBox.currentText():
             interaction.send_to_server(f"EDIT_CREDENTIAL|{table}|{where_clause}|{where_params}|{updates}")
             self.close()
-        else:
+        elif not self.password_lineEdit.text():
             self.error_label.setText("The password field must be filled in!")
-
+        elif not self.category_comboBox.currentText():
+            self.error_label.setText("The category field cannot be empty!")
 
     def generate_password(self):
         """

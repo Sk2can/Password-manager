@@ -2,7 +2,7 @@ import ast
 import pywinstyles
 from PyQt5.QtCore import Qt, QPoint, QTimer, QEvent
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication, QHeaderView
 from client_side.gui.add_password_window import AddPasswordWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
 from common import consts, interaction, general
@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
             self.tableWidget.cellClicked.connect(self.on_table_item_clicked)
             self.tableWidget.customContextMenuRequested.connect(self.open_context_menu)
             self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+            self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.tableWidget.setColumnHidden(6, True)
             self.tableWidget.setColumnHidden(7, True)
 
@@ -92,7 +93,6 @@ class MainWindow(QMainWindow):
         """
         Обновление списка категорий.
         """
-
 
         response = interaction.send_to_server(f"GET_CATEGORIES|{self.user}")
         self.add_tree_item(ast.literal_eval(response))

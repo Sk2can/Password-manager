@@ -30,7 +30,11 @@ def handle_client(client_socket):
         elif cmd == "REG":
             try:
                 username, password = decrypted_message[0], decrypted_message[1]
+                # Создание пользователя
                 result = database.add_user(username, password, cursor=None)
+                # Создание базовой категории
+                result += database.add_entry(table="categories", user_fk=username, name="default")
+
             except Exception as e:
                 print(f"Error| {e}")
         elif cmd == "TOTP":
@@ -96,12 +100,14 @@ def handle_client(client_socket):
                 login = decrypted_message[2]
                 password_encrypted = decrypted_message[3]
                 url = decrypted_message[4]
-                category_id = database.search("categories", "name", decrypted_message[5],
-                                              "id")
+                category_name = decrypted_message[5]
+                category_id = database.search("categories", "name", category_name,"id")
                 if category_id:
                     category_id = category_id.split("|")[1]
-                else:
-                    database.add_entry(table="categories", user_fk=user_fk, name=decrypted_message[5])
+                elif category_name:
+                    database.add_entry(table="categories", user_fk=user_fk, name=category_name)
+                    category_id = database.search("categories", "name", category_name,"id")
+                    category_id = category_id.split("|")[1]
                 notes = decrypted_message[6]
                 result = database.add_credential(user_fk, service, login, password_encrypted, url, category_id, notes)
             except Exception as e:
@@ -112,12 +118,24 @@ def handle_client(client_socket):
                 where_clause = ast.literal_eval(decrypted_message[1]) # Преобразуем строку в кортеж
                 where_params = ast.literal_eval(decrypted_message[2])
                 updates = ast.literal_eval(decrypted_message[3]) # Преобразуем строку в словарь
+                category_name = updates["category"]
+                current_user = updates["user"]
+                del updates["category"]
+                del updates["user"]
                 now = datetime.now() # Получаем текущее время
                 time_format = "%Y-%m-%d %H:%M:%S"
                 change_at = f"{now:{time_format}}" # Преобразуем объект времени по заданному шаблону
                 updates["updated_at"] = change_at
                 password_encrypted = encrypt_string(DB_PRIVATE_KEY, updates["password_encrypted"]) # Шифруем пароль
                 updates["password_encrypted"] = password_encrypted
+                category_id = database.search("categories", "name", category_name,"id")
+                if category_id:
+                    category_id = category_id.split("|")[1]
+                elif category_name and not category_id:
+                    database.add_entry(table="categories", user_fk=current_user, name=category_name)
+                    category_id = database.search("categories", "name", category_name,"id")
+                    category_id = category_id.split("|")[1]
+                updates["category_id"] = category_id
                 result = database.edit_credential(table, updates, where_clause, where_params)
             except Exception as e:
                 print(f"Error| {e}")
