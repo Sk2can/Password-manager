@@ -126,3 +126,14 @@ QMenuBar::item:selected {{
     background-color: {accent};
     color: {bg};
 }}
+
+QProgressBar {{
+    border: 1px solid #999;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}}
+
+QProgressBar::chunk {{
+    border-radius: 5px;
+}}

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout
 from PyQt5 import uic, QtCore
 from common import consts, interaction
 import pywinstyles
-from common.general import generate_password
+from common.general import generate_password, password_entropy
 
 
 class AddPasswordWindow(QDialog):
@@ -28,7 +28,9 @@ class AddPasswordWindow(QDialog):
             self.add_pushButton.clicked.connect(self.add_credential)
         if hasattr(self, "generate_pushButton"):
             self.generate_pushButton.clicked.connect(self.generate_password)
-
+        if hasattr(self, "password_lineEdit"):
+            self.password_lineEdit.textChanged.connect(self.change_status_bar)
+        self.progressBar.setMaximum(128)
         pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
         # Блокировка отключения последнего чекбокса
@@ -107,3 +109,27 @@ class AddPasswordWindow(QDialog):
         length = self.length_spinBox.value()
         password = generate_password(length, lowercase, numbers, capitals, symbols)
         self.password_lineEdit.setText(password)
+
+    def change_status_bar(self):
+        bits = password_entropy(self.password_lineEdit.text())
+        display_value = min(bits, 128)
+        self.progressBar.setValue(display_value)
+
+        # Вычисляем цвет от красного к зелёному
+        ratio = min(display_value / 128, 1.0)
+        red = int(255 * (1 - ratio))
+        green = int(255 * ratio)
+        color = f'rgb({red}, {green}, 0)'
+
+        self.progressBar.setStyleSheet(f"""
+            QProgressBar {{
+                border: 1px solid #999;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: bold;
+            }}
+            QProgressBar::chunk {{
+                background-color: {color};
+                border-radius: 5px;
+            }}
+        """)

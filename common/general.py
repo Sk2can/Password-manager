@@ -1,4 +1,5 @@
 import ast
+import math
 import random
 import re
 import string
@@ -137,6 +138,35 @@ def generate_password(length=16, use_lower=True, use_digits=True, use_upper=True
 
     password = ''.join(random.choice(chars) for _ in range(length))
     return password
+
+def password_entropy(password):
+    """
+    Вычисление энтропии пароля в битах.
+    n - Количество возможных символов пароля;
+    l - Количество используемых символов в пароле.
+
+    :param password: Пароль для расчета.
+    :type password: str
+    :return bits: Энтропия в битах.
+    :rtype bits: int
+    """
+
+    n = 0
+    l = len(set(password))
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    has_symbol = any(not c.isalnum() for c in password)
+    if has_upper:
+        n += len(string.ascii_uppercase)
+    if has_lower:
+        n += len(string.ascii_lowercase)
+    if has_digit:
+        n += len(string.digits)
+    if has_symbol:
+        n += len("~!?@#$%^&*_-+()[]{}><.,;")
+    bits = l * math.log(n, 2)
+    return round(bits)
 
 def convert_string(s):
     try:
