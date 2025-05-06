@@ -6,6 +6,8 @@ import threading
 import socket
 import os
 
+from common.general import convert_string
+
 
 def handle_client(client_socket):
     try:
@@ -139,12 +141,37 @@ def handle_client(client_socket):
                 result = database.edit_credential(table, updates, where_clause, where_params)
             except Exception as e:
                 print(f"Error| {e}")
+        elif cmd == "ADD_ENTRY":
+            try:
+                new_entry = dict(item.split("=") for item in decrypted_message) # Преобразование списка в словарь
+                database.add_entry(table=new_entry["table"], user_fk=new_entry["user_fk"], name=new_entry["name"])
+            except Exception as e:
+                print(f"Error| {e}")
+        elif cmd == "EDIT_ENTRY":
+            try:
+                new_entry = dict(item.split("=") for item in decrypted_message) # Преобразование списка в словарь
+                table = new_entry["table"]
+                updates = convert_string(new_entry["updates"])
+                where_clause = convert_string(new_entry["where_clause"])
+                where_params = convert_string(new_entry["where_params"])
+                database.edit_credential(table, updates, where_clause, where_params)
+            except Exception as e:
+                print(f"Error| {e}")
         elif cmd == "DELETE_ENTRY":
             try:
                 table = decrypted_message[0]
                 key_column = decrypted_message[1]
                 key = decrypted_message[2]
                 result = database.delete_entry(table, key_column, key)
+            except Exception as e:
+                print(f"Error| {e}")
+        elif cmd == "SEARCH_ENTRY":
+            try:
+                search_params = dict(item.split("=") for item in decrypted_message) # Преобразование списка в словарь
+                table = search_params["table"]
+                searching_column = search_params["searching_column"]
+                params = convert_string(search_params["params"])
+                result = str(database.search_entries(table, searching_column, params))
             except Exception as e:
                 print(f"Error| {e}")
 
@@ -168,7 +195,6 @@ def start_server():
         print(f"Accepted connection from {addr}")
         client_handler = threading.Thread(target=handle_client, args=(client_socket,))
         client_handler.start()
-
 
 if __name__ == "__main__":
     start_server()

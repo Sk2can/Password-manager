@@ -1,3 +1,4 @@
+import ast
 import random
 import re
 import string
@@ -136,6 +137,17 @@ def generate_password(length=16, use_lower=True, use_digits=True, use_upper=True
 
     password = ''.join(random.choice(chars) for _ in range(length))
     return password
+
+def convert_string(s):
+    try:
+        result = ast.literal_eval(s)
+        if isinstance(result, (dict, list, tuple)):
+            return result
+        else:
+            raise ValueError("Строка не является словарём, списком или кортежем.")
+    except (ValueError, SyntaxError) as e:
+        print(f"Ошибка: {e}")
+        return None
 
 # Пример использования
 if __name__ == "__main__":

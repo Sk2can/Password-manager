@@ -4,6 +4,9 @@ from PyQt5.QtCore import Qt, QPoint, QTimer, QEvent
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication, QHeaderView
 from client_side.gui.add_password_window import AddPasswordWindow
+from client_side.gui.create_category_windwow import CreateCategoryWindow
+from client_side.gui.delete_category_window import DeleteCategoryWindow
+from client_side.gui.edit_category_window import EditCategoryWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
 from common import consts, interaction, general
 from PyQt5 import uic, QtCore
@@ -35,6 +38,12 @@ class MainWindow(QMainWindow):
             self.treeView.clicked.connect(self.on_tree_item_clicked)
         if hasattr(self, "actionAdd_password_2"):
             self.actionAdd_password_2.triggered.connect(self.open_add_password_window)
+        if hasattr(self, "actionAdd_category_2"):
+            self.actionAdd_category_2.triggered.connect(self.open_create_category_window)
+        if hasattr(self, "actionEdit_category"):
+            self.actionEdit_category.triggered.connect(self.open_edit_category_window)
+        if hasattr(self, "actionDelete_category"):
+            self.actionDelete_category.triggered.connect(self.open_delete_category_window)
         if hasattr(self, "update_pushButton"):
             self.update_pushButton.clicked.connect(self.update_window)
         if hasattr(self, "tableWidget"):
@@ -139,6 +148,30 @@ class MainWindow(QMainWindow):
 
         add_password_window = AddPasswordWindow(self.user)
         add_password_window.exec_()
+
+    def open_create_category_window(self):
+        """
+        Функция инициализации диалогового окна создания категории.
+        """
+
+        create_category_window = CreateCategoryWindow(self.user)
+        create_category_window.exec_()
+
+    def open_edit_category_window(self):
+        """
+        Функция инициализации диалогового окна изменения категорий.
+        """
+
+        edit_category_window = EditCategoryWindow(self.user)
+        edit_category_window.exec_()
+
+    def open_delete_category_window(self):
+        """
+        Функция инициализации диалогового окна удаления категорий.
+        """
+
+        delete_category_window = DeleteCategoryWindow(self.user)
+        delete_category_window.exec_()
 
     def update_window(self):
         reset_interface(self,"main_window.ui")

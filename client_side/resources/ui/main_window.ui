@@ -166,7 +166,25 @@
     </property>
     <addaction name="actionAdd_password_2"/>
    </widget>
+   <widget class="QMenu" name="menuTags">
+    <property name="title">
+     <string>Tags</string>
+    </property>
+    <addaction name="actionCreate_tag"/>
+    <addaction name="actionEdit_tag"/>
+    <addaction name="actionDelete_tag"/>
+   </widget>
+   <widget class="QMenu" name="menuCategories">
+    <property name="title">
+     <string>Categories</string>
+    </property>
+    <addaction name="actionAdd_category_2"/>
+    <addaction name="actionEdit_category"/>
+    <addaction name="actionDelete_category"/>
+   </widget>
    <addaction name="menuAdd_password"/>
+   <addaction name="menuCategories"/>
+   <addaction name="menuTags"/>
    <addaction name="menuFind"/>
   </widget>
   <action name="actionAdd_password">
@@ -182,6 +200,36 @@
   <action name="actionAdd_category">
    <property name="text">
     <string>Add category</string>
+   </property>
+  </action>
+  <action name="actionAdd_category_2">
+   <property name="text">
+    <string>Create category</string>
+   </property>
+  </action>
+  <action name="actionEdit_category">
+   <property name="text">
+    <string>Edit category</string>
+   </property>
+  </action>
+  <action name="actionDelete_category">
+   <property name="text">
+    <string>Delete category</string>
+   </property>
+  </action>
+  <action name="actionCreate_tag">
+   <property name="text">
+    <string>Create tag</string>
+   </property>
+  </action>
+  <action name="actionDelete_tag">
+   <property name="text">
+    <string>Delete tag</string>
+   </property>
+  </action>
+  <action name="actionEdit_tag">
+   <property name="text">
+    <string>Edit tag</string>
    </property>
   </action>
  </widget>

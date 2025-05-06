@@ -395,6 +395,35 @@ def add_entry(cursor=None, **kwargs):
     status = f"0|ok"
     return status
 
+@db_connect
+def search_entries(table, searching_column, params, cursor=None):
+    """
+    Поиск всех соответствующих записей в таблице по условиям.
+    :param table: Название таблицы.
+    :type table: str
+    :param searching_column: Столбец для поиска.
+    :type searching_column: str
+    :param params: Словарь с названиями столбцов и их значениями.
+    :type params: Dict
+    :return: Код возврата.
+    :rtype : str
+    """
+
+
+    values = []
+    clause_str = ""
+    for key, value in params.items():
+        clause_str += key + " = %s AND "
+        values.append(value)
+    else:
+        clause_str = clause_str[:-5]
+    # SQL-запрос для изменения записи
+    query = f"SELECT {searching_column} FROM {table} WHERE {clause_str}"
+    # Выполняем запрос
+    cursor.execute(query, values)
+    fetched = cursor.fetchall()
+    result = [row[0] for row in fetched]
+    return result
 
 if __name__ == "__main__":
     pass
