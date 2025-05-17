@@ -1,8 +1,11 @@
 import ast
-from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout
+
+import pywinstyles
+from PyQt5.QtCore import QSettings, Qt
+from PyQt5.QtGui import QPainter, QPen, QColor, QFontDatabase
+from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout, QProgressBar
 from PyQt5 import uic, QtCore
 from common import consts, interaction
-import pywinstyles
 from common.general import generate_password, password_entropy
 
 
@@ -21,6 +24,8 @@ class AddPasswordWindow(QDialog):
         """
 
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "clear_pushButton"):
             self.clear_pushButton.clicked.connect(self.reset_interface)
@@ -31,8 +36,8 @@ class AddPasswordWindow(QDialog):
         if hasattr(self, "password_lineEdit"):
             self.password_lineEdit.textChanged.connect(self.change_status_bar)
         self.progressBar.setMaximum(128)
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+        self.bits_label.setText("0 bits")
         # Блокировка отключения последнего чекбокса
         self.checkboxes = self.findChildren(QCheckBox)
         for cb in self.checkboxes:
@@ -94,9 +99,9 @@ class AddPasswordWindow(QDialog):
 {self.category_comboBox.currentText()}|{self.notes_plainTextEdit.toPlainText()}")
             self.close()
         elif not self.password_lineEdit.text():
-            self.error_label.setText("The password field must be filled in!")
+            self.error_label.setText(self.tr("The password field must be filled in!"))
         elif not self.category_comboBox.currentText():
-            self.error_label.setText("The category field cannot be empty!")
+            self.error_label.setText(self.tr("The category field cannot be empty!"))
 
     def generate_password(self):
         """
@@ -111,25 +116,55 @@ class AddPasswordWindow(QDialog):
         self.password_lineEdit.setText(password)
 
     def change_status_bar(self):
-        bits = password_entropy(self.password_lineEdit.text())
-        display_value = min(bits, 128)
+        # Ограничим значение максимумом
+        entropy = password_entropy(self.password_lineEdit.text())
+        display_value = min(entropy, 128)
+        # Вычисляем соотношение заполненности
+        max_measure = self.get_progress_bar_color()
+        max_color = max_measure["color"]
+        self.progressBar.setStyleSheet(f"""
+        QProgressBar {{
+            color: rgb(255, 255, 255);
+            border-radius: 5px;
+            text-align: center;
+        }}
+        QProgressBar::chunk {{
+            background: transparent;
+            border-radius: 5px;
+            background: qlineargradient(
+                x1: 0, y1: 0, x2: 1, y2: 0,
+                stop: 0 rgb(255, 0, 0),
+                stop: 1 rgb{max_color}
+            );
+        }}
+    """)
+        if entropy > 128:
+            self.bits_label.setText(">128 bits")
+        else:
+            self.bits_label.setText(f"{str(display_value)} bits")
         self.progressBar.setValue(display_value)
 
-        # Вычисляем цвет от красного к зелёному
-        ratio = min(display_value / 128, 1.0)
-        red = int(255 * (1 - ratio))
-        green = int(255 * ratio)
-        color = f'rgb({red}, {green}, 0)'
-
-        self.progressBar.setStyleSheet(f"""
-            QProgressBar {{
-                border: 1px solid #999;
-                border-radius: 5px;
-                text-align: center;
-                font-weight: bold;
-            }}
-            QProgressBar::chunk {{
-                background-color: {color};
-                border-radius: 5px;
-            }}
-        """)
+    def get_progress_bar_color(self):
+        display_value = password_entropy(self.password_lineEdit.text())
+        # Ограничиваем значение от 0 до 128
+        value = max(0, min(display_value, 128))
+        # Вычисляем соотношение заполненности
+        percentage = (value / 128) * 100
+        # Красный, Желтый, Зеленый в RGB
+        red = (255, 0, 0)
+        yellow = (255, 255, 0)
+        green = (0, 255, 0)
+        # Вычисляем, на каком участке градиента находится заполненность
+        if percentage <= 50:
+            # Интерполяция от красного к желтому
+            ratio = percentage / 50  # Нормализуем на 0-1 (для первой половины)
+            r = int(red[0] + (yellow[0] - red[0]) * ratio)
+            g = int(red[1] + (yellow[1] - red[1]) * ratio)
+            b = int(red[2] + (yellow[2] - red[2]) * ratio)
+        else:
+            # Интерполяция от желтого к зеленому
+            ratio = (percentage - 50) / 50  # Нормализуем на 0-1 (для второй половины)
+            r = int(yellow[0] + (green[0] - yellow[0]) * ratio)
+            g = int(yellow[1] + (green[1] - yellow[1]) * ratio)
+            b = int(yellow[2] + (green[2] - yellow[2]) * ratio)
+        return {"color":(r, g, b), "percent":percentage}

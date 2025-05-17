@@ -1,139 +1,288 @@
-/* Глобальный стиль */
-*{{
-    font-family: "OpenSans";
-}}
-
-/* Базовый стиль */
+/* === Общий фон и текст === */
 QWidget {{
     background-color: {bg};
-    color: {main_text};
-    font-size: 13px;
 }}
 
-/* Основной текст */
+/* === Метки === */
 QLabel {{
     color: {main_text};
 }}
 
-/* Вторичный текст */
-QLabel[secondary="true"] {{
-    color: {secondary_text};
-}}
-
-/* Кнопки */
+/* === Кнопки === */
 QPushButton {{
     background-color: {accent};
     color: {bg};
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    border: 0px solid;
+    border-radius: 6px;
+    padding: 6px 14px;
 }}
-
 QPushButton:hover {{
     background-color: {accent_hover};
 }}
 
-QPushButton:disabled {{
-    background-color: {borders};
-    color: {secondary_text};
+/* === Поля ввода === */
+QLineEdit, QPlainTextEdit, QComboBox {{
+    border: none;
+    font-size: 12 px;
+    border-bottom: 2px solid {main_text}; /* Цвет подчёркивания */
+    border-radius: 4px;               /* Скругление краёв */
+    padding: 4px;                     /* Отступ, чтобы подчерк выглядел аккуратно */
+    background: {fg};          /* Без фона, если хочешь "вписать" */
+    color: {main_text};                   /* Цвет текста (пример для тёмной темы) */
+}}
+QPlainTextEdit:hover, QLineEdit:hover, QComboBox:hover {{
+    background-color: {fg_light}; /* Лёгкая подсветка фона */
+}}
+QPlainTextEdit:focus, QLineEdit:focus, QComboBox:focus {{
+    border-bottom: 2px solid {accent};
 }}
 
-/* Текстовые поля */
-QLineEdit, QTextEdit, QPlainTextEdit {{
+/* === QTextBrowser === */
+QTextBrowser {{
+    background-color: {bg};           /* Цвет фона */
+    color: {main_text};                      /* Цвет текста */
+    border: 1px solid {borders};      /* Граница */
+    border-radius: 3px;              /* Скругления */
+    padding: 8px;                    /* Внутренние отступы */
+    font-size: 14px;
+}}
+QTextBrowser:hover {{
     background-color: {bg};
+    color: {main_text};
+}}
+
+/* === Чекбоксы и радиокнопки === */
+QCheckBox, QRadioButton {{
+    color: {main_text};
+}}
+QCheckBox::indicator, QRadioButton::indicator {{
+    width: 14px;
+    height: 14px;
+}}
+
+/* Стиль выпадающего списка */
+QComboBox QAbstractItemView {{
+    background-color: {fg};
+    selection-background-color: {accent};
+    selection-color: {main_text};
+    color: {main_text};
+    font-size: 12 px;
+    outline: none;
     border: 1px solid {borders};
+}}
+QComboBox QAbstractItemView::item:hover {{
+    background-color: {fg_light};
+    color: {main_text};
+}}
+QComboBox {{
+    font-size: 15px; /* размер текста основного поля */
+}}
+QComboBox::hover {{
+    background-color: {fg_light};
+}}
+QComboBox QLineEdit {{
+    font-size: 18px; /* размер редактируемого текста */
+    padding: 4px;
+}}
+QComboBox QLineEdit::hover {{
+    background-color: transparent; /* или тот же #d0d0d0, если нужно */
+}}
+QComboBox::down-arrow {{
+    image: url(:/png/icons/down_arrow_light.png);  /* путь к иконке */
+    width: 24px;
+    height: 24px;
+}}
+QComboBox::drop-down {{
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left: 1px solid gray;
+}}
+
+/* Меню бар и контекстное меню */
+QMenuBar {{
+    border-bottom: 1px solid {fg};
+    border-top: 1px solid {fg};
+    background-color: {bg};
     color: {main_text};
     padding: 4px;
-    selection-background-color: {accent};
-    selection-color: {bg};
 }}
-
-/* Сообщения */
-QLabel[error="true"] {{
-    color: {error};
+QMenuBar::item {{
+    spacing: 3px;
+    padding: 4px 10px;
+    background: transparent;
 }}
-
-QLabel[success="true"] {{
-    color: {success};
-}}
-
-QLabel[warn="true"] {{
-    color: {warn};
-}}
-
-/* Таблицы и деревья */
-QTableWidget, QTreeView {{
-    background-color: {bg};
-    border: 1px solid {borders};
+QMenuBar::item:selected {{
+    background: {borders};
     color: {main_text};
-    gridline-color: transparent;
-    selection-background-color: {accent};
-    alternate-background-color: {borders};
-    selection-color: {bg};
+    border-radius: 4px;
 }}
-
-QTableWidget::item:selected, QTreeView::item:selected {{
-    background-color: {accent_hover};
+QMenuBar::item:pressed {{
+    background: {secondary_text};
     color: {bg};
 }}
+QMenu {{
+    background-color: {bg};
+    color: {main_text};
+}}
+QMenu::item {{
+    padding: 6px 20px;
+    border-radius: 4px;
+    background-color: transparent;
+    color: {main_text};
+}}
+QMenu::item:selected {{
+    background-color: {accent};
+    color: {bg};
+    border-radius: 4px;
+}}
 
-/* Заголовки таблиц */
+/* QTreeView */
+QTreeView {{
+    background-color: {bg};
+    border: 1px solid {borders};
+    border-radius: 5px;
+    font-size: 14px;
+    color: {main_text};
+}}
+QTreeView:item {{
+    padding: 4px;
+    color: {main_text};
+}}
+QTreeView:item:selected {{
+    background-color: {accent};
+    border-radius: 5px;
+    color: {bg};
+}}
+QTreeView:item:!selected {{
+    background-color: transparent;
+}}
+QTreeView:branch {{
+    background-color: transparent;
+}}
+QTreeView:indicator {{
+    width: 16px;
+    height: 16px;
+}}
+QTreeView:indicator:checked {{
+    background-color: {accent};
+}}
+QTreeView:indicator:unchecked {{
+    background-color: transparent;
+}}
+QTreeView:header {{
+    background-color: #333333; /* Цвет фона заголовка */
+    color: #EAEAEA;            /* Цвет текста заголовка */
+    border: none;              /* Убираем границу у заголовка */
+}}
 QHeaderView::section {{
+    border-right: none;
+    background-color: {fg}; /* Темный фон для секции */
+    color: {main_text};            /* Светлый цвет текста */
+    padding: 4px;              /* Отступы внутри секции */
+    border: 1px solid {borders}; /* Граница между секциями */
+    font-size: 12px;           /* Размер шрифта */
+    font-weight: bold;         /* Жирный шрифт */
+}}
+QHeaderView::section:horizontal {{
+    color: {secondary_text};             /* Цвет текста при наведении */
+}}
+QHeaderView::section:hover {{
+    border-bottom: 2px solid {accent}; /* Граница снизу */
+}}
+
+/* QTableView */
+QTableView {{
     background-color: {bg};
     color: {main_text};
     border: 1px solid {borders};
+    gridline-color: {borders};
+    selection-background-color: {accent};
+    border-radius: 5px;
+    selection-color: {bg};
+    font-size: 14px;
+    alternate-background-color: {fg};
+}}
+QTableView QHeaderView::section:horizontal {{
+    border-left: 1px solid {fg_light}; /* Граница между столбцами */
+}}
+QTableView QHeaderView::section:first {{
+    border-left: none;
+}}
+QTableCornerButton::section {{
+    background-color: {fg};
+    border: 1px solid {borders};
+}}
+QTableView::item {{
+    border: none;
     padding: 4px;
 }}
-
-/* Скроллбары */
+QTableView::item:selected {{
+    background-color: {accent};
+    color: {bg};
+}}
 QScrollBar:vertical, QScrollBar:horizontal {{
     background: {bg};
     width: 10px;
+    height: 10px;
     margin: 0px;
 }}
-
 QScrollBar::handle:vertical, QScrollBar::handle:horizontal {{
     background: {borders};
     border-radius: 5px;
 }}
-
 QScrollBar::add-line, QScrollBar::sub-line {{
     background: none;
-    height: 0px;
-    width: 0px;
-}}
-
-/* QMenuBar */
-QMenuBar {{
-    background-color: {bg};
-    color: {fg};
-    border-bottom: 1px solid {borders};
-}}
-
-QMenuBar::item {{
-    background-color: transparent;
-    color: {fg};
-    padding: 6px 12px;
     border: none;
 }}
 
-QMenuBar::item:hover {{
-    background-color: {accent_hover};
-    color: {bg};
+/* QSpinBox */
+QSpinBox {{
+    border: none;
+    font-size: 12 px;
+    border-bottom: 2px solid {main_text}; /* Цвет подчёркивания */
+    border-radius: 4px;               /* Скругление краёв */
+    padding: 4px;                     /* Отступ, чтобы подчерк выглядел аккуратно */
+    background: {fg};          /* Без фона, если хочешь "вписать" */
+    color: {main_text};                   /* Цвет текста (пример для тёмной темы) */
+}}
+QSpinBox:hover {{
+    background-color: {fg_light}; /* Лёгкая подсветка фона */
+}}
+QSpinBox:focus {{
+    border-bottom: 2px solid {accent};
+}}
+QSpinBox::down-arrow {{
+    image: url(:/png/icons/down_arrow_light.png);  /* или замени на none если не используешь */
+}}
+QSpinBox::up-arrow {{
+    image: url(:/png/icons/up_arrow_light.png);  /* или замени на none если не используешь */
 }}
 
-QMenuBar::item:selected {{
-    background-color: {accent};
-    color: {bg};
+/* Вертикальная полоса прокрутки */
+QScrollBar:vertical {{
+    border: none;
+    background-color: {fg_light};
+    background: {fg_light};
+    width: 6px;
+    margin: 5px, 0, 5px, 0;
 }}
-
-QProgressBar {{
-    border: 1px solid #999;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
+QScrollBar::handle:vertical {{
+    background: {secondary_text};  /* Цвет "ручки" */
+    min-height: 12px;
+    border-radius: 3px;
 }}
-
-QProgressBar::chunk {{
-    border-radius: 5px;
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+    background: None;
+    border: none;
+    height: 0px;
+    width: 0px;
 }}
+QScrollBar::add-line:vertical {{
+background: none;
+height: 45px;
+subcontrol-position: bottom;
+subcontrol-origin: margin;
+}}
+QScrollBar::sub-line:vertical {{
+background: none;}}

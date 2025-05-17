@@ -1,12 +1,24 @@
 <RCC>
   <qresource prefix="png">
+    <file>icons/up_arrow_dark.png</file>
+    <file>icons/up_arrow_light.png</file>
+    <file>icons/sync.png</file>
+    <file>icons/search.png</file>
+    <file>icons/down_arrow_dark.png</file>
+    <file>icons/down_arrow_light.png</file>
+    <file>icons/key_dark.png</file>
     <file>icons/key.png</file>
+    <file>icons/dark_mode_blak.png</file>
+    <file>icons/dark_mode_white.png</file>
+    <file>icons/light_mode_blak.png</file>
+    <file>icons/light_mode_white.png</file>
     <file>icons/close_button.png</file>
     <file>icons/crop_square.png</file>
     <file>icons/minimize_button.png</file>
     <file>icons/logo.png</file>
   </qresource>
   <qresource prefix="Fonts">
+    <file>ArialicHollow.ttf</file>
     <file>OpenSans.ttf</file>
   </qresource>
 </RCC>

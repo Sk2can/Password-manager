@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from common.consts import ROOT
 from common.interaction import send_to_server
 from common.crypt import decrypt_string
-from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import QRectF, QSettings
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic, QtCore
 from common import consts
@@ -23,9 +23,10 @@ Form, Base = uic.loadUiType(f"{consts.UI}totp_setup_window.ui")
 class TOTPSetupWindow(QDialog, Form):
     def __init__(self,user, parent=None):
         super().__init__(parent)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         self.setupUi(self)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint) # Удаление кнопки вопроса
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         encrypted_totp_code = send_to_server(f"TOTP|{user}").split("|")[1]
         totp_code = decrypt_string(DB_PRIVATE_KEY, encrypted_totp_code)
         # Создание URI для Google Authenticator

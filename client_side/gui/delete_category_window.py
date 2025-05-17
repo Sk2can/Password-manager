@@ -3,6 +3,7 @@ from sqlite3.dbapi2 import paramstyle
 
 import pywinstyles
 from PyQt5 import uic, QtCore
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QDialog
 from common import consts, interaction
 from common.general import convert_string
@@ -25,6 +26,8 @@ class DeleteCategoryWindow(QDialog):
         """
 
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "delete_pushButton"):
             self.delete_pushButton.clicked.connect(self.delete_entry_local)
@@ -34,16 +37,15 @@ class DeleteCategoryWindow(QDialog):
         for category in self.categories:
             self.current_categories_comboBox.addItem(category)
         if len(self.categories) == 1:
-            self.error_label.setText("You can't delete the last category!")
+            self.error_label.setText(self.tr("You can't delete the last category!"))
             self.delete_pushButton.setEnabled(False)
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def delete_entry_local(self):
         del_category = self.current_categories_comboBox.currentText()
         if del_category:
             if not self.is_confirmed:
-                self.error_label.setText("Are you sure? All passwords belonging to it will also be deleted!")
+                self.error_label.setText(self.tr("Are you sure? All passwords belonging to it will also be deleted!"))
                 self.is_confirmed = True
             else:
                 table = "categories"
@@ -55,4 +57,4 @@ class DeleteCategoryWindow(QDialog):
                 interaction.send_to_server(message)
                 self.close()
         else:
-            self.error_label.setText("Select a category to delete!")
+            self.error_label.setText(self.tr("Select a category to delete!"))

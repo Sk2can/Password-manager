@@ -5,7 +5,6 @@ from common.crypt import decrypt_string, encrypt_string
 import threading
 import socket
 import os
-
 from common.general import convert_string
 
 
@@ -53,9 +52,13 @@ def handle_client(client_socket):
                                          "fa_secret_encrypted").split("|")[1]
                 decrypted_secret = decrypt_string(DB_PRIVATE_KEY ,secret)
                 result = TOTP.totp_verify(decrypted_secret, user_input) # Закомментируй, чтобы убрать второй фактор
-                result = "ok"
                 if result:
                     result = "0|ok"
+                    now = datetime.now()
+                    time_format = "%Y-%m-%d %H:%M:%S"
+                    last_login = f"{now:{time_format}}"
+                    database.edit_credential("users", {"last_login": last_login},
+                                             ("username",),(user,))
                 else:
                     result = "1|wrong time password"
             except Exception as e:

@@ -60,6 +60,8 @@ def initialize_database():
         cursor.execute("USE password_manager")
 
         # Создаем таблицу users, если она не существует
+        # color_mode (true - black, false - light)
+        # language (true - english, false - russian)
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS Users (
             username VARCHAR(32) UNIQUE NOT NULL PRIMARY KEY,
@@ -219,6 +221,8 @@ def add_user(username, password, cursor=None):
     password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
     secret_key = TOTP.generate_secret_key()
     secret_key_crypt = encrypt_string(DB_PRIVATE_KEY, secret_key)
+    color = True
+    language = True
 
     # SQL-запрос для добавления записи
     now = datetime.now()
@@ -259,7 +263,7 @@ def auth_user(username, password, cursor=None):
     if bcrypt.checkpw(password.encode("utf-8"), stored_password_hash.encode("utf-8")):
         return "0|ok"
     else:
-        return "2|wrong password"
+        return "1|wrong password"
 
 @db_connect
 def search(table, key_column, key_value, field, cursor=None):

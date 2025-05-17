@@ -1,6 +1,7 @@
 import ast
 import pywinstyles
 from PyQt5 import uic, QtCore
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QDialog
 from common import consts, interaction
 
@@ -20,10 +21,11 @@ class CreateCategoryWindow(QDialog):
         """
 
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "create_pushButton"):
             self.create_pushButton.clicked.connect(self.add_entry_local)
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def add_entry_local(self):
@@ -34,9 +36,9 @@ class CreateCategoryWindow(QDialog):
                 self.add_category(table="categories", name=self.category_lineEdit.text(), user_fk=self.user)
                 self.close()
             else:
-                self.error_label.setText("The field must be filled!")
+                self.error_label.setText(self.tr("The field must be filled!"))
         else:
-            self.error_label.setText("This category already exists!")
+            self.error_label.setText(self.tr("This category already exists!"))
 
     def add_category(self, **kwargs):
         data = "|".join(f"{key}={value}" for key, value in kwargs.items())

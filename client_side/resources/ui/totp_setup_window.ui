@@ -6,21 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
-    <height>604</height>
+    <width>553</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Vaultary</string>
+   <string>Vaultary - TOTP code</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
-     <property name="autoFillBackground">
-      <bool>false</bool>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
-      <string>Введите данный ключ или отсканируйте QR-код в приложении для создания генератора одноразовых паролей:</string>
+      <string>Enter this key or scan the QR code in the application to create a one-time password generator:</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -36,6 +38,11 @@
    </item>
    <item>
     <widget class="QLabel" name="secret_key_label">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <property name="text">
       <string>secret_key</string>
      </property>
@@ -43,15 +50,25 @@
    </item>
    <item>
     <widget class="QLabel" name="label_3">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>Внимание, данный ключ больше нельзя будет увидеть!</string>
+      <string>Attention, this key will no longer be visible!</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="done_pushButton">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>Готово</string>
+      <string>Done</string>
      </property>
     </widget>
    </item>

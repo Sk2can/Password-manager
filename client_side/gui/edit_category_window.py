@@ -1,6 +1,7 @@
 import ast
 import pywinstyles
 from PyQt5 import uic, QtCore
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QDialog
 from common import consts, interaction
 
@@ -21,13 +22,14 @@ class EditCategoryWindow(QDialog):
         """
 
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "edit_pushButton"):
             self.edit_pushButton.clicked.connect(self.edit_entry_local)
         self.categories = ast.literal_eval(interaction.send_to_server(f"GET_CATEGORIES|{self.user}"))
         for category in self.categories:
             self.currnet_categories_comboBox.addItem(category)
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def edit_entry_local(self):
@@ -39,9 +41,9 @@ class EditCategoryWindow(QDialog):
                                    where_params=(self.user, old_name,))
                 self.close()
             else:
-                self.error_label.setText("The field must be filled!")
+                self.error_label.setText(self.tr("The field must be filled!"))
         else:
-            self.error_label.setText("This category already exists!")
+            self.error_label.setText(self.tr("This category already exists!"))
 
     def edit_category(self, **kwargs):
         data = "|".join(f"{key}={value}" for key, value in kwargs.items())

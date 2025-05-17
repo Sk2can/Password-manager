@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1128</width>
-    <height>523</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,40 +17,50 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout" rowstretch="1,10,4,5" columnstretch="1,4">
-    <item row="1" column="0">
-     <widget class="QTreeView" name="treeView">
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
+   <layout class="QGridLayout" name="gridLayout" rowstretch="1,10,4,5" columnstretch="1,4,20">
+    <property name="leftMargin">
+     <number>10</number>
+    </property>
+    <property name="topMargin">
+     <number>10</number>
+    </property>
+    <property name="rightMargin">
+     <number>10</number>
+    </property>
+    <property name="bottomMargin">
+     <number>10</number>
+    </property>
+    <property name="spacing">
+     <number>5</number>
+    </property>
+    <item row="0" column="1" colspan="2">
+     <widget class="QLineEdit" name="search_lineEdit">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
       </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="2">
-     <widget class="QTextBrowser" name="textBrowser">
-      <property name="openExternalLinks">
-       <bool>true</bool>
+      <property name="text">
+       <string/>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="2">
-     <widget class="QLineEdit" name="lineEdit">
       <property name="clearButtonEnabled">
        <bool>false</bool>
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="update_pushButton">
-      <property name="text">
-       <string>Update</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" rowspan="2">
+    <item row="1" column="2" rowspan="2">
      <widget class="QTableWidget" name="tableWidget">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
       </property>
@@ -139,9 +149,89 @@
       </column>
       <column>
        <property name="text">
-        <string>Updatea at</string>
+        <string>Updated at</string>
        </property>
       </column>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QWidget" name="widget" native="true">
+      <property name="styleSheet">
+       <string notr="true">image: url(:/png/icons/search.png);</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QTreeView" name="treeView">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="showDropIndicator" stdset="0">
+       <bool>false</bool>
+      </property>
+      <property name="rootIsDecorated">
+       <bool>false</bool>
+      </property>
+      <property name="headerHidden">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QPushButton" name="update_pushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../res.qrc">
+        <normaloff>:/png/icons/sync.png</normaloff>:/png/icons/sync.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="3">
+     <widget class="QTextBrowser" name="textBrowser">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="openExternalLinks">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>
@@ -152,14 +242,14 @@
      <x>0</x>
      <y>0</y>
      <width>1128</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFind">
-    <property name="title">
-     <string>Find</string>
-    </property>
-   </widget>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <widget class="QMenu" name="menuAdd_password">
     <property name="title">
      <string>Passwords</string>
@@ -182,10 +272,17 @@
     <addaction name="actionEdit_category"/>
     <addaction name="actionDelete_category"/>
    </widget>
+   <widget class="QMenu" name="menuUser">
+    <property name="title">
+     <string>User</string>
+    </property>
+    <addaction name="actionSettings"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menuUser"/>
    <addaction name="menuAdd_password"/>
    <addaction name="menuCategories"/>
    <addaction name="menuTags"/>
-   <addaction name="menuFind"/>
   </widget>
   <action name="actionAdd_password">
    <property name="text">
@@ -232,7 +329,19 @@
     <string>Edit tag</string>
    </property>
   </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res.qrc"/>
+ </resources>
  <connections/>
 </ui>

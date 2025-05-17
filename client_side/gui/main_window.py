@@ -1,6 +1,6 @@
 import ast
 import pywinstyles
-from PyQt5.QtCore import Qt, QPoint, QTimer, QEvent
+from PyQt5.QtCore import Qt, QPoint, QTimer, QEvent, QSettings
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication, QHeaderView
 from client_side.gui.add_password_window import AddPasswordWindow
@@ -8,6 +8,7 @@ from client_side.gui.create_category_windwow import CreateCategoryWindow
 from client_side.gui.delete_category_window import DeleteCategoryWindow
 from client_side.gui.edit_category_window import EditCategoryWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
+from client_side.gui.user_settings_window import SettingsWindow
 from common import consts, interaction, general
 from PyQt5 import uic, QtCore
 from common.general import reset_interface
@@ -16,7 +17,6 @@ from common.general import reset_interface
 class MainWindow(QMainWindow):
     def __init__(self, user, parent=None):
         super().__init__(parent)
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.load_ui("main_window.ui")
         self.user = user # Сохранение логина текущего пользователя
         self.restarting_to_login = False
@@ -33,6 +33,8 @@ class MainWindow(QMainWindow):
         :type ui_file: str
         """
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "treeView"):
             self.treeView.clicked.connect(self.on_tree_item_clicked)
@@ -46,6 +48,12 @@ class MainWindow(QMainWindow):
             self.actionDelete_category.triggered.connect(self.open_delete_category_window)
         if hasattr(self, "update_pushButton"):
             self.update_pushButton.clicked.connect(self.update_window)
+        if hasattr(self, "actionExit"):
+            self.actionExit.triggered.connect(self.restart_to_login)
+        if hasattr(self, "actionSettings"):
+            self.actionSettings.triggered.connect(self.open_settings_window)
+        if hasattr(self, "search_lineEdit"):
+            self.search_lineEdit.textChanged.connect(lambda text: self.search_table(self.search_lineEdit.text()))
         if hasattr(self, "tableWidget"):
             self.tableWidget.cellClicked.connect(self.on_table_item_clicked)
             self.tableWidget.customContextMenuRequested.connect(self.open_context_menu)
@@ -115,14 +123,14 @@ class MainWindow(QMainWindow):
         """
 
         # Создаём корневой элемент
-        parent_item = QStandardItem('Data base')
+        parent_item = QStandardItem(self.tr('All'))
         model = QStandardItemModel()
         # Добавляем дочерние элементы
         for child_text in children:
             child_item = QStandardItem(child_text)
             parent_item.appendRow(child_item)
         model.appendRow(parent_item)
-        model.setHeaderData(0, QtCore.Qt.Horizontal, 'Categories')
+        model.setHeaderData(0, QtCore.Qt.Horizontal, self.tr('Categories'))
         self.treeView.setModel(model)
         self.treeView.expandAll()
 
@@ -156,6 +164,14 @@ class MainWindow(QMainWindow):
 
         create_category_window = CreateCategoryWindow(self.user)
         create_category_window.exec_()
+
+    def open_settings_window(self):
+        """
+        Функция инициализации диалогового окна настроек пользователя.
+        """
+
+        settings_window = SettingsWindow(self.user)
+        settings_window.exec_()
 
     def open_edit_category_window(self):
         """
@@ -244,7 +260,7 @@ class MainWindow(QMainWindow):
         if dialog is None:
             dialog = QMessageBox()
             dialog.setWindowTitle("Confirm")
-            dialog.setText("Are you sure you want to delete the entry?")
+            dialog.setText(self.tr("Are you sure you want to delete the entry?"))
             dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         pywinstyles.apply_style(dialog, "dark")
         # Показываем окно
@@ -299,3 +315,14 @@ class MainWindow(QMainWindow):
 
         self.inactivity_timer.stop()
         self.inactivity_timer.start(5 * 60 * 1000)  # 5 минут = 300000 мс
+
+    def search_table(self, query):
+        query = query.lower()
+        for row in range(self.tableWidget.rowCount()):
+            match_found = False
+            for col in range(self.tableWidget.columnCount()):
+                item = self.tableWidget.item(row, col)
+                if item and query in item.text().lower():
+                    match_found = True
+                    break
+            self.tableWidget.setRowHidden(row, not match_found)

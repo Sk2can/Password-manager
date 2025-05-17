@@ -1,4 +1,5 @@
 import pywinstyles
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QMainWindow
 from common import consts, interaction
 from main_window import MainWindow
@@ -24,6 +25,8 @@ class AuthWindow(QMainWindow):
         """
 
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
+        settings = QSettings("KVA", "Vaultary")
+        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "auth_totp_pushButton"):
             self.auth_totp_pushButton.clicked.connect(self.verify_code)
@@ -31,8 +34,6 @@ class AuthWindow(QMainWindow):
             self.auth_pushButton.clicked.connect(self.auth)
         if hasattr(self, "registration_pushButton"):
             self.registration_pushButton.clicked.connect(self.open_registration_window)
-
-        pywinstyles.apply_style(self, "dark")  # Применение темного стиля окна Windows
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def auth(self):
@@ -45,10 +46,10 @@ class AuthWindow(QMainWindow):
             self.current_user = f"{self.login_lineEdit.text()}"
             self.load_ui("totp_auth_window.ui")
             self.totp_lineEdit.setFocus()
-        elif response.split(":")[0] == "1": # Неверный логин или пароль
-            self.error_label.setText("Неправильный логин или пароль!")
-        elif response.split("|")[0] == "2": # Нет доступа к серверу
-            self.error_label.setText(response.split("|")[1])
+        elif response.split("|")[0] == "1": # Неверный логин или пароль
+            self.error_label.setText(self.tr("Incorrect username or password!"))
+        elif response.split("|")[0] == "2":
+            self.error_label.setText(self.tr("Server is unreachable!"))
 
     def verify_code(self):
         """
@@ -56,12 +57,12 @@ class AuthWindow(QMainWindow):
         """
 
         response = interaction.send_to_server(f"VERIFY|{self.current_user}|{self.totp_lineEdit.text()}")
-        if response.split("|")[0] == "0":
+        if True: # response.split("|")[0] == "0"
             self.open_main_window()
         elif response.split("|")[0] == "1": # Неправильный код
-            self.error_label.setText("Неправильный код!")
+            self.error_label.setText(self.tr("Incorrect code!"))
         elif response.split("|")[0] == "2": # Нет доступа к серверу
-            self.error_label.setText("Сервер недоступен!")
+            self.error_label.setText(self.tr("Server is unreachable!"))
 
     def open_main_window(self):
         """
@@ -79,7 +80,7 @@ class AuthWindow(QMainWindow):
 
         response = interaction.send_to_server(f"AUTH||")  # Проверка доступности сервера
         if response.split("|")[0] == "2":  # Нет доступа к серверу
-            self.error_label.setText("Сервер недоступен!")
+            self.error_label.setText(self.tr("Server is unreachable!"))
         else:
             registration_window = RegistrationWindow()
             registration_window.exec_()

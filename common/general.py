@@ -165,7 +165,10 @@ def password_entropy(password):
         n += len(string.digits)
     if has_symbol:
         n += len("~!?@#$%^&*_-+()[]{}><.,;")
-    bits = l * math.log(n, 2)
+    if password:
+        bits = l * math.log(n, 2)
+    else:
+        bits = 0
     return round(bits)
 
 def convert_string(s):
