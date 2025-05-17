@@ -1,5 +1,4 @@
 import ast
-
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QDialog, QCheckBox
 from PyQt5 import uic, QtCore

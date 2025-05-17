@@ -16,7 +16,6 @@ import os
 # Загружаем переменные из .env
 load_dotenv(f"{ROOT}/critical.env")
 DB_PRIVATE_KEY = os.getenv("DB_PRIVATE_KEY")
-
 Form, Base = uic.loadUiType(f"{consts.UI}totp_setup_window.ui")
 
 

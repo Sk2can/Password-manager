@@ -1,9 +1,7 @@
 import ast
-
 import pywinstyles
-from PyQt5.QtCore import QSettings, Qt
-from PyQt5.QtGui import QPainter, QPen, QColor, QFontDatabase
-from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout, QProgressBar
+from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import QDialog, QCheckBox, QWidget, QLayout
 from PyQt5 import uic, QtCore
 from common import consts, interaction
 from common.general import generate_password, password_entropy

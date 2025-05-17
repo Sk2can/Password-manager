@@ -1,6 +1,5 @@
 import pywinstyles
 from PyQt5.QtCore import QSettings
-
 from totp_setup_window import TOTPSetupWindow
 from common import consts, interaction
 from PyQt5.QtWidgets import QDialog

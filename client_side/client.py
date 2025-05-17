@@ -1,7 +1,5 @@
 import pywinstyles
 from PyQt5.QtCore import QTranslator, QSettings
-from PyQt5.QtWidgets import QApplication
-
 from common.consts import STYLE, colors, FONT, RU_LANG, colors_light
 from gui.auth_window import AuthWindow
 from PyQt5.QtWinExtras import QtWin

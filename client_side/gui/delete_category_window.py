@@ -1,6 +1,4 @@
 import ast
-from sqlite3.dbapi2 import paramstyle
-
 import pywinstyles
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import QSettings
