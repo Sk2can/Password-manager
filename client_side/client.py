@@ -12,7 +12,6 @@ import os
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     settings = QSettings("KVA", "Vaultary")
-    window = AuthWindow()
 
     # Прочитать настройки
     language = settings.value("language", "en")  # по умолчанию "en"
@@ -27,6 +26,7 @@ if __name__ == "__main__":
     font_id = QFontDatabase.addApplicationFont(FONT)
     font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
 
+    window = AuthWindow()
     # Загрузим .qss файл с плейсхолдерами
     if theme == "dark":
         app.setWindowIcon(QIcon(":/png/icons/key.png"))  # Установка иконки окна
