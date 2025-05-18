@@ -2,7 +2,7 @@ import re
 import pywinstyles
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QDialog, QAction
+from PyQt5.QtWidgets import QDialog, QAction, QMessageBox, QApplication
 from common import consts, interaction
 
 
@@ -57,6 +57,8 @@ class SettingsWindow(QDialog):
             self.rus_pushButton.clicked.connect(lambda i:self.add_effect(self.eng_pushButton))
         if hasattr(self, "confirm_pushButton"):
             self.confirm_pushButton.clicked.connect(self.send_changes)
+        if hasattr(self, "delete_user_pushButton"):
+            self.delete_user_pushButton.clicked.connect(self.delete_user)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def add_effect(self, old_button):
@@ -97,3 +99,19 @@ class SettingsWindow(QDialog):
         elif self.language == "ru":
             self.settings.setValue("language", "ru")
         self.close()
+
+    def delete_user(self):
+        dialog = None  # Инициализация переменной для диалога
+        # Если диалог ещё не создан — создаём его
+        if dialog is None:
+            dialog = QMessageBox()
+            dialog.setWindowTitle("Confirm")
+            dialog.setText(self.tr("Are you sure you want to delete your account?"))
+            dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        if self.settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
+        # Показываем окно
+        reply = dialog.exec_()
+        if reply == QMessageBox.Yes:
+            # здесь код удаления
+            response = interaction.send_to_server(f"DELETE_ENTRY|users|username|{self.current_user}")
+            QApplication.quit()
