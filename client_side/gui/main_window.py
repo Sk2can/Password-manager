@@ -17,6 +17,7 @@ from common.general import reset_interface
 class MainWindow(QMainWindow):
     def __init__(self, user, parent=None):
         super().__init__(parent)
+        self.settings = QSettings("KVA", "Vaultary")
         self.load_ui("main_window.ui")
         self.user = user # Сохранение логина текущего пользователя
         self.restarting_to_login = False
@@ -33,8 +34,7 @@ class MainWindow(QMainWindow):
         :type ui_file: str
         """
         uic.loadUi(f"{consts.UI}/{ui_file}", self)
-        settings = QSettings("KVA", "Vaultary")
-        if settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
+        if self.settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Подключение сигналов
         if hasattr(self, "treeView"):
             self.treeView.clicked.connect(self.on_tree_item_clicked)
@@ -262,7 +262,7 @@ class MainWindow(QMainWindow):
             dialog.setWindowTitle("Confirm")
             dialog.setText(self.tr("Are you sure you want to delete the entry?"))
             dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        pywinstyles.apply_style(dialog, "dark")
+        if self.settings.value("theme", "dark") == "dark": pywinstyles.apply_style(self, "dark")
         # Показываем окно
         reply = dialog.exec_()
         if reply == QMessageBox.Yes:
