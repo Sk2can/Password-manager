@@ -3,6 +3,8 @@ import pywinstyles
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QDialog, QAction, QMessageBox, QApplication
+
+from client_side.gui.change_user_password_window import ChangeUserPasswordWindow
 from common import consts, interaction
 
 
@@ -59,6 +61,8 @@ class SettingsWindow(QDialog):
             self.confirm_pushButton.clicked.connect(self.send_changes)
         if hasattr(self, "delete_user_pushButton"):
             self.delete_user_pushButton.clicked.connect(self.delete_user)
+        if hasattr(self, "change_password_pushButton"):
+            self.change_password_pushButton.clicked.connect(self.open_change_user_password_window)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def add_effect(self, old_button):
@@ -115,3 +119,12 @@ class SettingsWindow(QDialog):
             # здесь код удаления
             response = interaction.send_to_server(f"DELETE_ENTRY|users|username|{self.current_user}")
             QApplication.quit()
+
+    def open_change_user_password_window(self):
+        """
+        Функция инициализации диалогового окна изменения пароля пользователя.
+        """
+
+        self.close()
+        change_user_password_window = ChangeUserPasswordWindow(self.current_user)
+        change_user_password_window.exec_()
