@@ -29,7 +29,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="currnet_categories_comboBox">
+      <widget class="QComboBox" name="current_categories_comboBox">
        <property name="font">
         <font>
          <pointsize>10</pointsize>

@@ -5,9 +5,12 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication, QHeaderView
 from client_side.gui.add_password_window import AddPasswordWindow
 from client_side.gui.create_category_windwow import CreateCategoryWindow
+from client_side.gui.create_tag_window import CreateTagWindow
 from client_side.gui.delete_category_window import DeleteCategoryWindow
+from client_side.gui.delete_tag_window import DeleteTagWindow
 from client_side.gui.edit_category_window import EditCategoryWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
+from client_side.gui.edit_tag_window import EditTagWindow
 from client_side.gui.user_settings_window import SettingsWindow
 from common import consts, interaction, general
 from PyQt5 import uic, QtCore
@@ -61,6 +64,16 @@ class MainWindow(QMainWindow):
             self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.tableWidget.setColumnHidden(6, True)
             self.tableWidget.setColumnHidden(7, True)
+        if hasattr(self, "actionCreate_tag"):
+            self.actionCreate_tag.triggered.connect(self.open_create_tag_window)
+        if hasattr(self, "actionDelete_tag"):
+            self.actionDelete_tag.triggered.connect(self.open_delete_tag_window)
+        if hasattr(self, "actionEdit_tag"):
+            self.actionEdit_tag.triggered.connect(self.open_edit_tag_window)
+        if hasattr(self, "tag_comboBox"):
+            self.tag_comboBox.model().setData(self.tag_comboBox.model().index(0, 0),
+                                              QtCore.Qt.transparent, QtCore.Qt.BackgroundRole)
+            self.tag_comboBox.setItemData(0, 0, QtCore.Qt.UserRole - 1)  # Используем UserRole для скрытия
 
         # Таймер бездействия
         self.inactivity_timer = QTimer(self)
@@ -180,6 +193,30 @@ class MainWindow(QMainWindow):
 
         edit_category_window = EditCategoryWindow(self.user)
         edit_category_window.exec_()
+
+    def open_create_tag_window(self):
+        """
+        Функция инициализации диалогового окна создания меток.
+        """
+
+        create_tag_window = CreateTagWindow(self.user)
+        create_tag_window.exec_()
+
+    def open_delete_tag_window(self):
+        """
+        Функция инициализации диалогового окна удаления меток.
+        """
+
+        delete_tag_window = DeleteTagWindow(self.user)
+        delete_tag_window.exec_()
+
+    def open_edit_tag_window(self):
+        """
+        Функция инициализации диалогового окна удаления меток.
+        """
+
+        edit_tag_window = EditTagWindow(self.user)
+        edit_tag_window.exec_()
 
     def open_delete_category_window(self):
         """

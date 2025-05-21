@@ -11,36 +11,39 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Vaultary - category create</string>
+   <string>Vaultary - tag edit</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="category_label">
+      <widget class="QLabel" name="current_tag_label">
        <property name="font">
         <font>
          <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>New category name:</string>
+        <string>Current tag:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="category_lineEdit">
+      <widget class="QComboBox" name="current_tag_comboBox">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
         </font>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QLabel" name="error_label">
        <property name="font">
@@ -54,24 +57,21 @@
        <property name="text">
         <string/>
        </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <widget class="QPushButton" name="create_pushButton">
+      <widget class="QPushButton" name="edit_pushButton">
        <property name="font">
         <font>
          <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Create category</string>
+        <string>Edit tag</string>
        </property>
       </widget>
      </item>

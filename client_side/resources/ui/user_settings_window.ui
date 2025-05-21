@@ -225,6 +225,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>light_mode_pushButton</tabstop>
+  <tabstop>dark_mode_pushButton</tabstop>
+  <tabstop>rus_pushButton</tabstop>
+  <tabstop>eng_pushButton</tabstop>
+  <tabstop>confirm_pushButton</tabstop>
+  <tabstop>change_password_pushButton</tabstop>
+  <tabstop>delete_user_pushButton</tabstop>
+ </tabstops>
  <resources>
   <include location="../res.qrc"/>
  </resources>
