@@ -29,12 +29,12 @@ class EditCategoryWindow(QDialog):
             self.edit_pushButton.clicked.connect(self.edit_entry_local)
         self.categories = ast.literal_eval(interaction.send_to_server(f"GET_CATEGORIES|{self.user}"))
         for category in self.categories:
-            self.currnet_categories_comboBox.addItem(category)
+            self.current_categories_comboBox.addItem(category)
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
     def edit_entry_local(self):
-        old_name = self.categories[self.currnet_categories_comboBox.currentIndex()]
-        new_name = self.currnet_categories_comboBox.currentText()
+        old_name = self.categories[self.current_categories_comboBox.currentIndex()]
+        new_name = self.current_categories_comboBox.currentTet()
         if new_name not in self.categories:
             if new_name:
                 self.edit_category(table="categories", updates={"name": new_name}, where_clause=("user_fk", "name"),
