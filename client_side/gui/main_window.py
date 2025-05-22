@@ -11,6 +11,7 @@ from client_side.gui.delete_tag_window import DeleteTagWindow
 from client_side.gui.edit_category_window import EditCategoryWindow
 from client_side.gui.edit_password_window import EditPasswordWindow
 from client_side.gui.edit_tag_window import EditTagWindow
+from client_side.gui.tag_assignment_window import TagAssignmentWindow
 from client_side.gui.user_settings_window import SettingsWindow
 from common import consts, interaction, general
 from PyQt5 import uic, QtCore
@@ -21,8 +22,8 @@ class MainWindow(QMainWindow):
     def __init__(self, user, parent=None):
         super().__init__(parent)
         self.settings = QSettings("KVA", "Vaultary")
-        self.load_ui("main_window.ui")
         self.user = user # Сохранение логина текущего пользователя
+        self.load_ui("main_window.ui")
         self.restarting_to_login = False
         self.lsts = () # Инициализация кортежа для полученных паролей
         self.response = "" # Инициализация строки ответа от сервера
@@ -71,9 +72,14 @@ class MainWindow(QMainWindow):
         if hasattr(self, "actionEdit_tag"):
             self.actionEdit_tag.triggered.connect(self.open_edit_tag_window)
         if hasattr(self, "tag_comboBox"):
-            self.tag_comboBox.model().setData(self.tag_comboBox.model().index(0, 0),
-                                              QtCore.Qt.transparent, QtCore.Qt.BackgroundRole)
-            self.tag_comboBox.setItemData(0, 0, QtCore.Qt.UserRole - 1)  # Используем UserRole для скрытия
+            self.tag_comboBox.currentIndexChanged.connect(self.on_combo_changed)
+
+        params = {"user_fk": self.user}
+        self.tags = ast.literal_eval(
+            interaction.send_to_server(f"SEARCH_ENTRY|table=tags|searching_column=name|params={params}"))
+        if self.tags:
+            for tag in self.tags:
+                self.tag_comboBox.addItem(tag)
 
         # Таймер бездействия
         self.inactivity_timer = QTimer(self)
@@ -94,13 +100,27 @@ class MainWindow(QMainWindow):
         row_position = self.tableWidget.rowCount()  # получаем индекс новой строки
         self.tableWidget.insertRow(row_position)  # вставляем новую строку
 
+        credential_tags_names = []
+        params = {"credential_id": data[0]}
+        credential_tags_ids = ast.literal_eval(
+            interaction.send_to_server(f"SEARCH_ENTRY|table=credential_tag|searching_column=tag_id|params={params}"))
+        for tag_id in credential_tags_ids:
+            params = {"user_fk": self.user, "id": tag_id}
+            name = ast.literal_eval(
+                interaction.send_to_server(f"SEARCH_ENTRY|table=tags|searching_column=name|params={params}"))
+            if name:
+                credential_tags_names.append(name[0])
+
+
         column = 0
         for i, value in enumerate(data):
             if i not in exclude_indices:
                 item = QTableWidgetItem(str(value))
                 item.setData(Qt.UserRole, data[0])
+                item.setData(Qt.UserRole + 2, credential_tags_names) # Сохранение тегов
                 self.tableWidget.setItem(row_position, column, item)
                 column+=1
+
             elif i == 4:
                 stars = "*" * len(value)
                 item = QTableWidgetItem(str(stars))
@@ -243,16 +263,33 @@ class MainWindow(QMainWindow):
         if item:
             row = item.row()
             menu = QMenu(self)
+            action_assign_tags = QAction("Assign tags", self)
             action_copy = QAction("Copy password", self)
             action_edit = QAction("Edit", self)
             action_delete = QAction("Delete", self)
+            action_assign_tags.triggered.connect(lambda: self.assign_tags(row))
             action_copy.triggered.connect(lambda: self.copy_password(row))
             action_edit.triggered.connect(lambda: self.edit_row(row))
             action_delete.triggered.connect(lambda: self.delete_row(row))
+            menu.addAction(action_assign_tags)
             menu.addAction(action_copy)
             menu.addAction(action_edit)
             menu.addAction(action_delete)
             menu.exec_(self.tableWidget.viewport().mapToGlobal(pos))
+
+    def assign_tags(self, row_index):
+        """
+        Инициализация окна назначения меток записям.
+
+        :param row_index: Индекс записи в таблице окна.
+        :type row_index: int
+        """
+
+        row_data = general.get_row_as_dict(self.tableWidget, row_index)
+        db_index = self.tableWidget.item(row_index, 0).data(Qt.UserRole)
+        item = self.tableWidget.item(row_index, 2)
+        assign_tags_window = TagAssignmentWindow(self.user, row_data, item.data(Qt.UserRole + 1), db_index)
+        assign_tags_window.exec_()
 
     def copy_password(self, row):
         """
@@ -316,16 +353,48 @@ class MainWindow(QMainWindow):
             item = self.tableWidget.item(row, col)
             value = item.text() if item else ''
             row_data[header] = value
+
+        item = self.tableWidget.item(row, 0)
+        tags = []
+        if item:
+            # Получаем список обратно
+            tags = item.data(QtCore.Qt.UserRole + 2)
+
         for column, value in row_data.items():
             if value:
                 if column == "URL":
                     self.textBrowser.insertHtml(f"<b>{column}</b>: <a href={value}>{value}</a>. ")
-                elif column == "Notes":
+                elif column == "Notes" or column == "Заметки":
                     notes = f"<br><br><b>{column}</b>:<br>{value}"
                 else:
                     self.textBrowser.insertHtml(f"<b>{column}</b>: {value}. ")
+        tags_header = self.tr("<br>Tags")
+        self.textBrowser.insertHtml(f"<b>{tags_header}</b>: ")
+
+        if len(tags) != 0:
+            for i, tag in enumerate(tags):
+                if i == len(tags) - 1:
+                    self.textBrowser.insertHtml(f"{tag}.")
+                else:
+                    self.textBrowser.insertHtml(f"{tag}, ")
+        else:
+            self.textBrowser.insertHtml(self.tr(f"No tags are assigned to this password."))
         if notes:
             self.textBrowser.insertHtml(notes)
+
+    def on_combo_changed(self, index):
+        for row in range(self.tableWidget.rowCount()):
+            self.tableWidget.setRowHidden(row, False)
+        tag = self.tag_comboBox.itemText(index)
+        if tag:
+            for row_number in range(self.tableWidget.rowCount()):
+                item = self.tableWidget.item(row_number, 0)
+                tags = []
+                if item:
+                    # Получаем список обратно
+                    tags = item.data(QtCore.Qt.UserRole + 2)
+                if tag not in tags:
+                    self.tableWidget.setRowHidden(row_number, True)  # скрыть строку
 
     def restart_to_login(self):
         from client_side.gui.auth_window import AuthWindow

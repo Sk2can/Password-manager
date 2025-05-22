@@ -150,6 +150,12 @@ def handle_client(client_socket):
                 database.add_entry(table=new_entry["table"], user_fk=new_entry["user_fk"], name=new_entry["name"])
             except Exception as e:
                 print(f"Error| {e}")
+        elif cmd == "UNIVERSAL_ADD_ENTRY":
+            try:
+                new_entry = dict(item.split("=") for item in decrypted_message)  # Преобразование списка в словарь
+                database.add_entry(**new_entry)
+            except Exception as e:
+                print(f"Error| {e}")
         elif cmd == "EDIT_ENTRY":
             try:
                 new_entry = dict(item.split("=") for item in decrypted_message) # Преобразование списка в словарь

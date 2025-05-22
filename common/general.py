@@ -182,6 +182,30 @@ def convert_string(s):
         print(f"Ошибка: {e}")
         return None
 
+def compare_lists(old_list, new_list):
+    """
+    Сравнивает два списка и возвращает разницу.
+
+    :param old_list: Предыдущий список
+    :param new_list: Новый список
+    :return: dict с ключами:
+             'added' — что добавлено,
+             'removed' — что удалено,
+             'unchanged' — что осталось
+    """
+    old_set = set([str(n) for n in old_list])
+    new_set = set([str(n) for n in new_list])
+
+    added = list(new_set - old_set)
+    removed = list(old_set - new_set)
+    unchanged = list(old_set & new_set)
+
+    return {
+        'added': added,
+        'removed': removed,
+        'unchanged': unchanged
+    }
+
 # Пример использования
 if __name__ == "__main__":
     print(generate_password(1, True, True, True, True))

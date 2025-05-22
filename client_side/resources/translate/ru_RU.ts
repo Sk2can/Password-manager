@@ -346,6 +346,21 @@
         <source>Confirm change</source>
         <translation>Подтвердить изменения</translation>
     </message>
+    <message>
+        <location filename="../ui/tag_assignment_window.ui" line="14"/>
+        <source>Vaultary - tag assignment</source>
+        <translation>Vaultary - присвоение меток</translation>
+    </message>
+    <message>
+        <location filename="../ui/tag_assignment_window.ui" line="33"/>
+        <source>Tags:</source>
+        <translation>Метки:</translation>
+    </message>
+    <message>
+        <location filename="../ui/tag_assignment_window.ui" line="92"/>
+        <source>Confirm tags</source>
+        <translation>Подтвердить метки:</translation>
+    </message>
 </context>
 <context>
     <name>EditCategoryWindow</name>
@@ -404,12 +419,12 @@
         <translation>Зарегистрироваться</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="141"/>
+        <location filename="../ui/main_window.ui" line="104"/>
         <source>Login</source>
         <translation>Логин</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="146"/>
+        <location filename="../ui/main_window.ui" line="109"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
@@ -419,27 +434,27 @@
         <translation type="obsolete">Обновить</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="136"/>
+        <location filename="../ui/main_window.ui" line="99"/>
         <source>Service</source>
         <translation>Сервис</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="156"/>
+        <location filename="../ui/main_window.ui" line="119"/>
         <source>Category</source>
         <translation>Категория</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="161"/>
+        <location filename="../ui/main_window.ui" line="124"/>
         <source>Notes</source>
         <translation>Заметки</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="166"/>
+        <location filename="../ui/main_window.ui" line="129"/>
         <source>Craeted at</source>
         <translation>Дата создания</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="171"/>
+        <location filename="../ui/main_window.ui" line="134"/>
         <source>Updated at</source>
         <translation>Дата обновления</translation>
     </message>
@@ -449,57 +464,57 @@
         <translation type="obsolete">Найти</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="269"/>
+        <location filename="../ui/main_window.ui" line="281"/>
         <source>Passwords</source>
         <translation>Пароли</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="275"/>
+        <location filename="../ui/main_window.ui" line="287"/>
         <source>Tags</source>
         <translation>Метки</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="283"/>
+        <location filename="../ui/main_window.ui" line="295"/>
         <source>Categories</source>
         <translation>Категории</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="308"/>
+        <location filename="../ui/main_window.ui" line="320"/>
         <source>Add password</source>
         <translation>Добавить пароль</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="313"/>
+        <location filename="../ui/main_window.ui" line="325"/>
         <source>Add category</source>
         <translation>Добавить категорию</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="318"/>
+        <location filename="../ui/main_window.ui" line="330"/>
         <source>Create category</source>
         <translation>Создать категорию</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="323"/>
+        <location filename="../ui/main_window.ui" line="335"/>
         <source>Edit category</source>
         <translation>Изменить категорию</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="328"/>
+        <location filename="../ui/main_window.ui" line="340"/>
         <source>Delete category</source>
         <translation>Удалить категорию</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="333"/>
+        <location filename="../ui/main_window.ui" line="345"/>
         <source>Create tag</source>
         <translation>Создать метку</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="338"/>
+        <location filename="../ui/main_window.ui" line="350"/>
         <source>Delete tag</source>
         <translation>Удалить метку</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="343"/>
+        <location filename="../ui/main_window.ui" line="355"/>
         <source>Edit tag</source>
         <translation>Изменить метку</translation>
     </message>
@@ -509,17 +524,17 @@
         <translation>Введите TOTP код:</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="291"/>
+        <location filename="../ui/main_window.ui" line="303"/>
         <source>User</source>
         <translation>Пользователь</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="348"/>
+        <location filename="../ui/main_window.ui" line="360"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="353"/>
+        <location filename="../ui/main_window.ui" line="365"/>
         <source>Exit</source>
         <translation>Выйти</translation>
     </message>
@@ -544,12 +559,12 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="151"/>
+        <location filename="../ui/main_window.ui" line="114"/>
         <source>URL</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../gui/main_window.py" line="300"/>
+        <location filename="../../gui/main_window.py" line="337"/>
         <source>Are you sure you want to delete the entry?</source>
         <translation>Вы уверены, что хотите удалить запись?</translation>
     </message>
@@ -564,14 +579,29 @@
         <translation type="obsolete">База данных</translation>
     </message>
     <message>
-        <location filename="../../gui/main_window.py" line="139"/>
+        <location filename="../../gui/main_window.py" line="159"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
         <location filename="../ui/main_window.ui" line="246"/>
         <source>Select a tag...</source>
-        <translation>Выберете метку...</translation>
+        <translation type="obsolete">Выберете метку...</translation>
+    </message>
+    <message>
+        <location filename="../../gui/main_window.py" line="371"/>
+        <source>&lt;br&gt;Tags</source>
+        <translation>&lt;br&gt;Метки</translation>
+    </message>
+    <message>
+        <location filename="../../gui/main_window.py" line="381"/>
+        <source>No tags are assigned to this password.</source>
+        <translation>Этому паролю не присвоены метки.</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="241"/>
+        <source>Filter by tags:</source>
+        <translation>Отфильтровать по меткам:</translation>
     </message>
 </context>
 <context>
@@ -603,6 +633,14 @@
         <location filename="../../gui/user_settings_window.py" line="113"/>
         <source>Are you sure you want to delete your account?</source>
         <translation>Вы уверены, что хотите удалить свой аккаунт?</translation>
+    </message>
+</context>
+<context>
+    <name>TagAssignmentWindow</name>
+    <message>
+        <location filename="../../gui/tag_assignment_window.py" line="34"/>
+        <source>There are no available tags!</source>
+        <translation>Нет доступных меток!</translation>
     </message>
 </context>
 <context>

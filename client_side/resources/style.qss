@@ -286,3 +286,14 @@ subcontrol-origin: margin;
 }}
 QScrollBar::sub-line:vertical {{
 background: none;}}
+
+#tagContainer QFrame{{
+    background-color: {fg};
+    border: 0px solid {fg};
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+    padding: 4px;
+}}
