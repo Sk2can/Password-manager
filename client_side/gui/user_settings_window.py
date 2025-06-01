@@ -3,7 +3,6 @@ import pywinstyles
 from PyQt5 import uic, QtCore
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QDialog, QAction, QMessageBox, QApplication
-
 from client_side.gui.change_user_password_window import ChangeUserPasswordWindow
 from common import consts, interaction
 

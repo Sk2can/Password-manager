@@ -1,6 +1,7 @@
 import ast
 import pywinstyles
-from PyQt5.QtCore import Qt, QPoint, QTimer, QEvent, QSettings
+from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import Qt, QPoint, QEvent, QSettings
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QMenu, QAction, QMessageBox, QApplication, QHeaderView
 from client_side.gui.add_password_window import AddPasswordWindow
@@ -23,6 +24,7 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.settings = QSettings("KVA", "Vaultary")
         self.user = user # Сохранение логина текущего пользователя
+        self.inactivity_timer = QTimer(self)
         self.load_ui("main_window.ui")
         self.restarting_to_login = False
         self.lsts = () # Инициализация кортежа для полученных паролей
@@ -82,7 +84,6 @@ class MainWindow(QMainWindow):
                 self.tag_comboBox.addItem(tag)
 
         # Таймер бездействия
-        self.inactivity_timer = QTimer(self)
         self.inactivity_timer.setSingleShot(False)
         self.inactivity_timer.timeout.connect(self.restart_to_login)
         self.reset_inactivity_timer()
@@ -263,10 +264,10 @@ class MainWindow(QMainWindow):
         if item:
             row = item.row()
             menu = QMenu(self)
-            action_assign_tags = QAction("Assign tags", self)
-            action_copy = QAction("Copy password", self)
-            action_edit = QAction("Edit", self)
-            action_delete = QAction("Delete", self)
+            action_assign_tags = QAction(self.tr("Assign tags"), self)
+            action_copy = QAction(self.tr("Copy password"), self)
+            action_edit = QAction(self.tr("Edit"), self)
+            action_delete = QAction(self.tr("Delete"), self)
             action_assign_tags.triggered.connect(lambda: self.assign_tags(row))
             action_copy.triggered.connect(lambda: self.copy_password(row))
             action_edit.triggered.connect(lambda: self.edit_row(row))

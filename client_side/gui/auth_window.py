@@ -57,7 +57,7 @@ class AuthWindow(QMainWindow):
         """
 
         response = interaction.send_to_server(f"VERIFY|{self.current_user}|{self.totp_lineEdit.text()}")
-        if True: # response.split("|")[0] == "0"
+        if True:  #response.split("|")[0] == "0"
             self.open_main_window()
         elif response.split("|")[0] == "1": # Неправильный код
             self.error_label.setText(self.tr("Incorrect code!"))

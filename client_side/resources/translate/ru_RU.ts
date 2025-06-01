@@ -564,7 +564,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../../gui/main_window.py" line="337"/>
+        <location filename="../../gui/main_window.py" line="338"/>
         <source>Are you sure you want to delete the entry?</source>
         <translation>Вы уверены, что хотите удалить запись?</translation>
     </message>
@@ -579,7 +579,7 @@
         <translation type="obsolete">База данных</translation>
     </message>
     <message>
-        <location filename="../../gui/main_window.py" line="159"/>
+        <location filename="../../gui/main_window.py" line="160"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
@@ -589,12 +589,12 @@
         <translation type="obsolete">Выберете метку...</translation>
     </message>
     <message>
-        <location filename="../../gui/main_window.py" line="371"/>
+        <location filename="../../gui/main_window.py" line="372"/>
         <source>&lt;br&gt;Tags</source>
         <translation>&lt;br&gt;Метки</translation>
     </message>
     <message>
-        <location filename="../../gui/main_window.py" line="381"/>
+        <location filename="../../gui/main_window.py" line="382"/>
         <source>No tags are assigned to this password.</source>
         <translation>Этому паролю не присвоены метки.</translation>
     </message>
@@ -602,6 +602,26 @@
         <location filename="../ui/main_window.ui" line="241"/>
         <source>Filter by tags:</source>
         <translation>Отфильтровать по меткам:</translation>
+    </message>
+    <message>
+        <location filename="../../gui/main_window.py" line="267"/>
+        <source>Assign tags</source>
+        <translation>Присвоить метки</translation>
+    </message>
+    <message>
+        <location filename="../../gui/main_window.py" line="268"/>
+        <source>Copy password</source>
+        <translation>Скопировать пароль</translation>
+    </message>
+    <message>
+        <location filename="../../gui/main_window.py" line="269"/>
+        <source>Edit</source>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <location filename="../../gui/main_window.py" line="270"/>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>
@@ -630,7 +650,7 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../gui/user_settings_window.py" line="113"/>
+        <location filename="../../gui/user_settings_window.py" line="112"/>
         <source>Are you sure you want to delete your account?</source>
         <translation>Вы уверены, что хотите удалить свой аккаунт?</translation>
     </message>
