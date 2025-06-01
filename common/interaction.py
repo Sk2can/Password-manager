@@ -31,14 +31,22 @@ def send_to_server(string):
     if client == 2: # Возврат ошибки создания соединения
         return f"{client}|Сервер недоступен!"
     client_private_key, server_public_key = crypt.generate_key_pair() # Генерация пары ключей
-    client_public_key = client.recv(4096).decode("utf-8") # Получение ключа для шифрования сообщения серверу
+    client_public_key = client.recv(1024).decode("utf-8") # Получение ключа для шифрования сообщения серверу
     message = server_public_key.decode("utf-8") + "|" + string # Формирование сообщения для клиента
     encrypted_data = crypt.encrypt_large_data(client_public_key, message)
     client.send(encrypted_data.encode("utf-8")) # Отправка сообщения на сервер
-    response = client.recv(4096).decode("utf-8") # Получение зашифрованного сообщение от сервера
-    decrypted_message = crypt.decrypt_large_data(client_private_key, response) # Расшифровка полученного сообщения
-    return decrypted_message
-
+    buffer = ""
+    while True:
+        part = client.recv(1024).decode("utf-8")
+        if not part:
+            break
+        buffer += part
+        try:
+            # Пытаемся декодировать кадр
+            decrypted_message = crypt.decrypt_large_data(client_private_key, buffer)
+            return str(decrypted_message)
+        except BaseException:
+            continue  # Продолжаем получать части кадра, если неполный
 
 if __name__ == "__main__":
     pass
