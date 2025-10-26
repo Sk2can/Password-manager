@@ -30,7 +30,7 @@ if __name__ == "__main__":
     # Загрузим .qss файл с плейсхолдерами
     if theme == "dark":
         app.setWindowIcon(QIcon(":/png/icons/key.png"))  # Установка иконки окна
-        with open(STYLE, "r") as file:
+        with open(STYLE, "r", encoding="utf-8") as file:
             qss_template = file.read()
         # Заменим переменные на конкретные значения из словаря
         qss = qss_template.format(**colors)
