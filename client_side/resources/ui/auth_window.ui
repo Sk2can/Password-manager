@@ -157,7 +157,7 @@
          <enum>Qt::StrongFocus</enum>
         </property>
         <property name="text">
-         <string>sk2can</string>
+         <string></string>
         </property>
         <property name="cursorPosition">
          <number>6</number>
@@ -214,7 +214,7 @@
          </font>
         </property>
         <property name="text">
-         <string>1111111111111111</string>
+         <string></string>
         </property>
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
